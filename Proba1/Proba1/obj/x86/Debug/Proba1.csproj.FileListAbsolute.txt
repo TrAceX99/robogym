@@ -1,0 +1,9 @@
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\obj\x86\Debug\Proba1.csprojResolveAssemblyReference.cache
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\bin\Debug\Proba1.exe
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\bin\Debug\Proba1.pdb
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\bin\Debug\LibUsbDotNet.dll
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\bin\Debug\MonoBrick.dll
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\bin\Debug\MonoBrickFirmware.dll
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\bin\Debug\MonoBrick.xml
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\obj\x86\Debug\Proba1.exe
+C:\Users\djoki\Documents\Projects\Proba1\Proba1\obj\x86\Debug\Proba1.pdb

@@ -10,6 +10,7 @@ namespace TableCleaner
 {
 	class MainClass
 	{
+		// Neki bzvz komentar
 		public static void Scan()
 		{
 			MotorSync m = new MotorSync(MotorPort.OutB, MotorPort.OutD);

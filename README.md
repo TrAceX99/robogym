@@ -1,8 +1,12 @@
 # robogym
+
 Roboticka sekcija Pozarevacke Gimnazije
+
+
 
 Projekti:
   Bobot
 
-By TrAceX i Djokic
 
+
+By TrAceX i NikolaDjokic9

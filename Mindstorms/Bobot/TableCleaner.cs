@@ -49,6 +49,7 @@ namespace TableCleaner
 			}
 			bg.Abort();
 			motori.Brake();
+			Thread.Sleep (100);
 			motori.Off();
 		}
 	}

@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{6DC26AAE-8913-48E4-949F-93CADFCF2539}</ProjectGuid>
+    <ProjectGuid>{EB97AA30-335F-4DE4-BF35-3AB762AA2B3B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Proba1</RootNamespace>
-    <AssemblyName>Proba1</AssemblyName>
+    <RootNamespace>Bobot</RootNamespace>
+    <AssemblyName>Bobot</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -17,28 +17,25 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="EmptyInterface.cs" />
+    <Compile Include="TableCleaner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoBrickFirmware">
-      <HintPath>D:\dll\MonoBrickFirmware.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoBrick">
-      <HintPath>..\..\..\..\Desktop\MonoBrick%281%29\MonoBrick.dll</HintPath>
-    </Reference>
-    <Reference Include="LibUsbDotNet">
-      <HintPath>..\..\..\..\Desktop\MonoBrick%281%29\LibUsbDotNet.dll</HintPath>
+      <HintPath>..\MonoBrickFirmware.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

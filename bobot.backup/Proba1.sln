@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proba1", "Proba1\Proba1.csproj", "{6DC26AAE-8913-48E4-949F-93CADFCF2539}"
@@ -13,5 +13,24 @@ Global
 		{6DC26AAE-8913-48E4-949F-93CADFCF2539}.Debug|x86.Build.0 = Debug|x86
 		{6DC26AAE-8913-48E4-949F-93CADFCF2539}.Release|x86.ActiveCfg = Release|x86
 		{6DC26AAE-8913-48E4-949F-93CADFCF2539}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = null
+		$2.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $3
+		$3.AfterDelegateDeclarationParameterComma = True
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
+		$0.StandardHeader = $4
+		$4.Text = 
+		$4.IncludeInNewFiles = True
+		$0.VersionControlPolicy = $5
+		$5.inheritsSet = Mono
 	EndGlobalSection
 EndGlobal

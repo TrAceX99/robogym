@@ -1,10 +1,9 @@
-﻿<Properties StartupConfiguration="{6DC26AAE-8913-48E4-949F-93CADFCF2539}|Default">
+﻿<Properties StartupConfiguration="{6DC26AAE-8913-48E4-949F-93CADFCF2539}|Default" StartupItem="Proba1\Proba1.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Proba1 PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Proba1\EmptyInterface.cs">
     <Files>
       <File FileName="Proba1\EmptyInterface.cs" Line="38" Column="4" />
@@ -22,4 +21,5 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Proba1 PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>

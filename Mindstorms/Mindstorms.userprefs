@@ -1,1 +1,12 @@
-﻿<Properties StartupItem="Bobot\Bobot.csproj" GitUserInfo="UsingGIT" />
+﻿<Properties StartupItem="Bobot\Bobot.csproj" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Bobot\TableCleaner.cs">
+    <Files>
+      <File FileName="Bobot\TableCleaner.cs" Line="10" Column="2" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

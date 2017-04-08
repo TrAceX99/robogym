@@ -136,7 +136,7 @@ namespace TableCleaner
 			movement.Abort();
 			motors.Brake();
 			Thread.Sleep(C.motorBrakeSleepTime);
-			if (progress < tableLenght)
+			if (progress == tableLenght)
 				return false;
 			else
 				return true;

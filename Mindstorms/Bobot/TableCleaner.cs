@@ -37,7 +37,7 @@ namespace TableCleaner
 			public const sbyte armSpeed = 100;
 
 			public const int motorBrakeSleepTime = 200;
-			public const uint oneeightyInSteps = 800;
+			//public const uint oneeightyInSteps = 800;
 			public const short left = -200;
 			public const short right = 200;
 			public const uint stepsPerCm = 100; // Potrebno podesavanje
@@ -176,18 +176,16 @@ namespace TableCleaner
 			LcdConsole.WriteLine("Spustanje predmeta...");
 			ArmMove(ArmPosition.Open);
 
-			motorWH = motors.StepSync(C.dropoffPullbackSpeed, 0, C.dropoffPullbackSteps, true);
+			motorWH = motors.StepSync(-C.dropoffPullbackSpeed, 0, C.dropoffPullbackSteps, true);
 			motorWH.WaitOne();
 			ArmMove(ArmPosition.Closed);
 
 			LcdConsole.WriteLine("Tacho levog motora: {0}", lMotor.GetTachoCount().ToString());
 			LcdConsole.WriteLine("Tacho desnog motora: {0}", rMotor.GetTachoCount().ToString());
 			// Ovaj deo treba da vrati Bobota na pocetnu rotaciju
-			// Vrlo verovatno ne radi
-			int deltaTacho = rMotor.GetTachoCount() - lMotor.GetTachoCount();
+			uint deltaTacho = (uint)(rMotor.GetTachoCount() - lMotor.GetTachoCount());
 			sbyte speed = (sbyte)(C.dropoffTurnSpeed * Math.Sign(deltaTacho));
-			uint steps = (uint)(C.oneeightyInSteps + deltaTacho);
-			motorWH = motors.StepSync(speed, C.right, steps, true);
+			motorWH = motors.StepSync(speed, C.right, deltaTacho, true);
 			motorWH.WaitOne();
 			Thread.Sleep(C.motorBrakeSleepTime);
 			LcdConsole.WriteLine("Ciklus zavrsen!");

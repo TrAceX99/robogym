@@ -36,7 +36,7 @@ namespace TableCleaner
 			public const uint armLiftedPos = 100; // Potrebno podesavanje
 			public const sbyte armSpeed = 100;
 
-			public const short oneeightyInSteps = 800;
+			public const uint oneeightyInSteps = 800;
 			public const short left = -200;
 			public const short right = 200;
 			public const uint stepsPerCm = 100; // Potrebno podesavanje
@@ -58,7 +58,7 @@ namespace TableCleaner
 		 
 		// Ovaj deo ce biti implementiran kada se zavrsi funkcija skeniranja duzine stola.
 		static byte progress = 0; // Koliki deo stola smo presli (u ciklusima ScanMovementa)
-		static byte tableLenght = 256; // Duzina stola (u ciklusima ScanMovementa)
+		static byte tableLenght = 255; // Duzina stola (u ciklusima ScanMovementa)
 
 		// Resetuje ruku na polozaj 0 (Open)
 		static void ArmCalibrate()
@@ -76,10 +76,11 @@ namespace TableCleaner
 		static void ArmMove(ArmPosition targetPos)
 		{
 			int armTacho = armMotor.GetTachoCount();
-			sbyte direction = Math.Sign((uint)targetPos - armTacho);
+			int direction = Math.Sign((uint)targetPos - armTacho);
+			uint steps = (uint)Math.Abs((uint)targetPos - armTacho);
+			sbyte speed = (sbyte)(C.armSpeed * direction);
 
-			motorWH = armMotor.SpeedProfile(C.armSpeed * direction,
-				0, Math.Abs((uint)targetPos - armTacho), 0, true);
+			motorWH = armMotor.SpeedProfile(speed, 0, steps, 0, true);
 			motorWH.WaitOne();
 			armPos = targetPos;
 			if (armPos != ArmPosition.Lifted)
@@ -111,7 +112,7 @@ namespace TableCleaner
 			progress = 0;
 			while (ir.Read() > C.irScanTreshold && progress < tableLenght) {
 				LcdConsole.WriteLine(ir.Read().ToString());
-				if (color.Read() = 0)
+				if (color.Read() == 0)
 					throw new Exception("Color sensor value is zero");
 				Thread.Sleep(200);
 			}
@@ -127,7 +128,7 @@ namespace TableCleaner
 		static void Pickup()
 		{
 			ArmMove(ArmPosition.Open);
-			motorWH = motors.StepSync(C.pickupForwardSpeed, 0, ir.Read() * C.stepsPerCm, true);
+			motorWH = motors.StepSync(C.pickupForwardSpeed, 0, (uint)(ir.Read() * C.stepsPerCm), true);
 			motorWH.WaitOne();
 			ArmMove(ArmPosition.Lifted);
 		}
@@ -137,13 +138,13 @@ namespace TableCleaner
 			ir.Mode = IRMode.Seek;
 			BeaconLocation beacon = ir.ReadBeaconLocation();
 
-			motors.SetSpeed(C.carryTurnSpeed, C.right * Math.Sign (beacon.Location));
+			motors.SetSpeed(C.carryTurnSpeed, (short)(C.right * Math.Sign (beacon.Location)));
 
 			while (beacon.Location > 5 || beacon.Location < -5) {
 				beacon = ir.ReadBeaconLocation();
 			}
 			while (beacon.Distance > C.carryDistanceToBeacon) {
-				motors.SetSpeed(C.carryForwardSpeed, beacon.Location * C.carryBeaconLocationTurnCoeff);
+				motors.SetSpeed(C.carryForwardSpeed, beacon.Location); // Potreban koeficijent
 			}
 			motors.Brake();
 			Thread.Sleep(200);

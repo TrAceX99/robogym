@@ -14,6 +14,7 @@ int pitchMin;
 
 void setup() {
   // Kalibracija:
+  pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
   delay(2000);
   pitchMax = analogRead(PITCH_PHOTO);

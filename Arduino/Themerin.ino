@@ -5,7 +5,7 @@
 
 #define PITCH_PHOTO 0
 #define VOLUME_PHOTO 1
-#define PITCH_RANGE 600
+#define PITCH_RANGE 400
 #define PITCH_OFFSET 200
 
 int volumeMax;
@@ -31,8 +31,8 @@ void setup() {
   lcd.setCursor(0, 1);
   
   while(analogRead(PITCH_PHOTO) > pitchMax - 100 && analogRead(VOLUME_PHOTO) > volumeMax - 100)
-	if (analogRead(PITCH_PHOTO) > analogRead(VOLUME_PHOTO)) lcd.print(analogRead(PITCH_PHOTO));
-	else lcd.print(analogRead(VOLUME_PHOTO));
+  if (analogRead(PITCH_PHOTO) > analogRead(VOLUME_PHOTO)) lcd.print(analogRead(PITCH_PHOTO));
+  else lcd.print(analogRead(VOLUME_PHOTO));
   digitalWrite(13, HIGH);
   lcd.clear();
   lcd.home();
@@ -52,20 +52,25 @@ void setup() {
   lcd.print("PITCH:");
   lcd.setCursor(0, 1);
   lcd.print("VOLUME:");
+
+  Serial.begin(9600);
 }
 
 void loop() {
-  int pitch = analogRead(PITCH_PHOTO);
-  int volume = analogRead(VOLUME_PHOTO);
+  float pitch = analogRead(PITCH_PHOTO);
+  float volume = analogRead(VOLUME_PHOTO);
   
+//  pitch -= pitchMin;
+//  volume -= volumeMin;
+
   lcd.setCursor(7, 0);
   lcd.print(pitch);
   lcd.setCursor(8, 1);
   lcd.print(volume);
   
-  pitch -= pitchMin;
-  volume -= volumeMin;
-
-  toneAC(pitch / pitchMax * PITCH_RANGE + PITCH_OFFSET, (1 - volume * volumeMax) * 10);
+  float pitchAC = (pitch - pitchMin) / (pitchMax - pitchMin) * PITCH_RANGE + PITCH_OFFSET;
+  float volumeAC = 10 - volume / volumeMax * 10;
+  Serial.println(pitchAC);
+  toneAC(pitchAC, volumeAC);
   delay(10);
 }

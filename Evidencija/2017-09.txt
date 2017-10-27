@@ -1,1 +1,6 @@
-test
+Aktivni clanovi: Djordjevic Marko, Jankovic Nikola, Pavlovic Lazar, Bicic Andjela, Arsic Dragan, Djokic Nikola
+Robotska sekcija je imala 4 sastanka. Na prva 2 clanovi su se dogovarali za projetke na kojima ce da se radi tokom prvog polugodista.
+Na druga 2 se planiralo o ubacivanju novih clanova i prezentaciju za zainteresovane clanove.
+
+Dogovoreno je da glavni projekat bude 3D stampac koji treba da se realizuje do druge polovine decembra 2017. godine.
+Drugi projekat je Muzicki Teslin Kalem koji treba da se realizuje do 10. decebmra 2017. godine, na vreme za festival nauke u Beogradu.

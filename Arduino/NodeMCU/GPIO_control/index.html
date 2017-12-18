@@ -18,26 +18,12 @@ input {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://192.168.0.101/jquery.imagemapster.min.js"></script>
+<script type="text/javascript" src="http://%ipaddress%/jquery.imagemapster.min.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('img').mapster({
 			
 		});
-		
-		/*$("#myForm").submit(function(event){
-			event.preventDefault();
-			$.ajax({
-				url: "test",
-				data: $("#myForm").serialize(),
-				success: function(data){
-					alert(data);
-				},
-				error: function(xhr, desc, err){
-                    alert("err");
-                }
-			});
-		});*/
 		
 		var pins = "%dummystring%";
 		alert(pins);

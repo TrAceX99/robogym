@@ -5,8 +5,10 @@
 
 #define LED D0
 
-const char* ssid = "ZTE_942B17";
-const char* pass = "test464646";
+char* ssid = "Hardwired-To-Self-Destruct";
+char* pass = "metallica";
+const char* apssid = "ESP8266";
+const char* appass = "test464646";
 
 String dataserverIP = "192.168.0.101";
 
@@ -28,6 +30,7 @@ void handleRoot() {
       if (digitalRead(i)) pins += String(i) + ",";
     }
     html.replace("%dummystring%", pins);
+    html.replace("%ipaddress%", dataserverIP);
     
     server.send(200, "text/html", html);
   } else {
@@ -39,7 +42,7 @@ void handleRoot() {
 }
 
 void handleRedirect() {
-  File f = SPIFFS.open("redirect.html", "r");
+  File f = SPIFFS.open("/redirect.html", "r");
   if (!f) Serial.println("File open failed!");
   String html = f.readString();
   server.send(200, "text/html", html);
@@ -48,7 +51,7 @@ void handleRedirect() {
 
 void handleOffline() {
   Serial.println("Offline mode started");
-  File f = SPIFFS.open("offline.html", "r");
+  File f = SPIFFS.open("/offline.html", "r");
   if (!f) Serial.println("File open failed!");
   String html = f.readString();
   server.send(200, "text/html", html);
@@ -71,6 +74,23 @@ void testSubmit() {
   for (uint8_t i = 0; i < server.args(); i++) {
     Serial.println(server.argName(i) + " = " + server.arg(i));
   }
+}
+
+void handleConnect() {
+  /*if (server.hasArg("ssid") && server.hasArg("pass")) {
+    ssid = server.arg("ssid");
+    pass = server.arg("pass");
+    WiFi.begin(ssid, pass);
+    while (WiFi.status() != WL_CONNECTED) {
+      Serial.print(".");
+      delay(1000);
+    }
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("Invalid arguments!\n");
+  }*/
+  server.sendHeader("Location:", "/redirect", true);
+  server.send(307, "text/plain", "");
 }
 
 void handleNotFound() {
@@ -102,14 +122,18 @@ void setup() {
 
   Serial.println("Connecting to ");
   Serial.println(ssid);
-  WiFi.mode(WIFI_STA);
+  //WiFi.mode(WIFI_AP_STA);
+  //WiFi.softAP(ssid);
   WiFi.begin(ssid, pass);
-  while (WiFi.status() != WL_CONNECTED) {
+  while(WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
-    delay(1000);
+    delay(500);
   }
-  Serial.println("Connected");
+
+  //Serial.println("AP online");
+  delay(500);
   Serial.print("IP: ");
+  //Serial.println(WiFi.softAPIP());
   Serial.println(WiFi.localIP());
   Serial.println("Configuring server");
   delay(500);
@@ -119,6 +143,7 @@ void setup() {
   server.on("/submit", HTTP_POST, handleSubmit);
   server.on("/redirect", handleRedirect);
   server.on("/offline", handleOffline);
+  server.on("/connect", handleConnect);
   server.onNotFound(handleNotFound);
 
   server.begin();

@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>NodeMCU Debugging and Control</title>
+<style>
+#container {
+	border: 5px solid;
+	margin: auto;
+	width: 650px;
+}
+#controls {
+	margin: 30px;
+}
+ul {
+	list-style-type: none;	
+}
+input {
+	display: none;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://%ipaddress%/jquery.imagemapster.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('img').mapster({
+			
+		});
+		
+		var pins = "%dummystring%";
+		alert(pins);
+	});
+	function addControl(id) {
+		var item = document.getElementById(id);
+		if (item.style.display == "inline") {
+			item.style.display = "none"
+		} else {
+			item.style.display = "inline";
+		}
+	}
+	function sendAll() {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				alert(this.responseText);
+			}
+		};
+		xhttp.open("POST", "/submit", true);
+		var params = "";
+		for (var i = 16; i <= 16; i++) {
+			var chkbox = document.getElementById(i);
+			if (chkbox.style.display == "inline") {
+				params += i + "=";
+				if (chkbox.checked) params += "1";
+				else params += "0";
+				params += "&amp";
+			}
+		}
+		xhttp.send(params);
+	}
+	function sendData(pin) {
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "/submit", true);
+		var params = "";
+		var state = 0 + document.getElementById(pin).checked;
+		params += pin + "=" + state;
+		xhttp.send(params);
+	}
+</script>
+</head>
+<body>
+<h1>Test html</h1>
+<div id="container">
+	<img src="https://www.cnx-software.com/wp-content/uploads/2015/10/NodeMCU__v1.0_pinout.jpg" alt="NodeMCU" usemap="#map">
+	<map name="map">
+		<area href="#" onclick="addControl(16)" coords="355,37,476,72" shape="rect">
+		<area href="#" coords="411,74,471,99" shape="rect">
+	</map>
+<div id="controls">
+<form id="myForm">
+	<input onchange="sendData(16)" id="16" type="checkbox" name="led">D0 (GPIO16) - internal led<br>
+</form>
+<button onclick="sendAll()">SET</button>
+</div>
+</div>
+<a href="/disconnect"><button style="margin: auto; width: 200px; height: 70px;">WIFI DISCONNECT</button></a>
+</body>
+</html>

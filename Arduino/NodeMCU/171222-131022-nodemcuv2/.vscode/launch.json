@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "gdb",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "name": "PlatformIO Debugger",
+            "target": "d:/Marko/robogym/Arduino/NodeMCU/171222-131022-nodemcuv2/.pioenvs/nodemcuv2/firmware.elf",
+            "gdbpath": "C:/Users/Djole/.platformio/penv/Scripts/piodebuggdb",
+            "autorun": [ "source .pioinit" ]
+        }
+    ]
+}

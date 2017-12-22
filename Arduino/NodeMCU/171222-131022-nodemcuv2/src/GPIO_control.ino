@@ -86,6 +86,7 @@ void testSubmit() {
     for (uint8_t i = 0; i < server.args(); i++) {
         Serial.println(server.argName(i) + " = " + server.arg(i));
     }
+    server.send(200, "test/plain", "test content");
 }
 
 void handleConnect() {
@@ -112,17 +113,43 @@ void handleDisconnect() {
 
 void handleGet() {
     String json = "{";
-    //if(server.arg("data") == "wifiscan") {
+    if(server.arg("data") == "wifiscan") {
         int networks = WiFi.scanNetworks();
-        json += "\"n\":" + String(networks);
-        json += ",\"ssid\":[";
+        json += "\"n\":" + String(networks) + ",";
+
+        json += "\"ssid\":[";
         for (int i = 0; i < networks; i++) {
-            json += String(WiFi.SSID(i)) + ",";
+            json += "\"" + String(WiFi.SSID(i)) + "\"";
+            if (i < networks - 1) json += ",";
+        }
+        json += "],";
+
+        json += "\"channel\":[";
+        for (int i = 0; i < networks; i++) {
+            json += "\"" + String(WiFi.channel(i)) + "\"";
+            if (i < networks - 1) json += ",";
+        }
+        json += "],";
+
+        json += "\"rssi\":[";
+        for (int i = 0; i < networks; i++) {
+            json += "\"" + String(WiFi.RSSI(i)) + "\"";
+            if (i < networks - 1) json += ",";
+        }
+        json += "],";
+
+        json += "\"enc\":[";
+        for (int i = 0; i < networks; i++) {
+            json += "\"";
+            WiFi.encryptionType(i) == ENC_TYPE_NONE ? json += "open" : json += "";
+            json += "\"";
+            if (i < networks - 1) json += ",";
         }
         json += "]";
-    //}
+    }
     json += "}";
-    server.send(200, "text/plain", json);
+    server.send(200, "application/json; charset=utf-8", json);
+    Serial.println(json);
 }
 
 void handleNotFound() {
@@ -182,7 +209,7 @@ void setup() {
     server.on("/offline", handleOffline);
     server.on("/connect", handleConnect);
     server.on("/disconnect", handleDisconnect);
-    server.on("/get", HTTP_POST, handleGet);
+    server.on("/get", handleGet);
     server.onNotFound(handleNotFound);
 
     server.begin();

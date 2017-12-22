@@ -77,7 +77,7 @@ void testSubmit() {
 }
 
 void handleConnect() {
-  /*if (server.hasArg("ssid") && server.hasArg("pass")) {
+  if (server.hasArg("ssid") && server.hasArg("pass")) {
     ssid = server.arg("ssid");
     pass = server.arg("pass");
     WiFi.begin(ssid, pass);
@@ -88,7 +88,7 @@ void handleConnect() {
     Serial.println(WiFi.localIP());
   } else {
     Serial.println("Invalid arguments!\n");
-  }*/
+  }
   server.sendHeader("Location:", "/redirect", true);
   server.send(307, "text/plain", "");
 }

@@ -1,6 +1,7 @@
 <html>
 <head>
 	<title>Offline mode</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 	<h1>ESP8266 offline mode</h1>
@@ -15,5 +16,22 @@
 		<input name="pass" placeholder="WiFi password"><br>
 		<input type="submit">
 	</form>
+	<div>
+		<p id="data">WiFi scanning...</p>
+		<button onclick="scan()">SCAN</button>
+	</div>
+<script type="text/javascript">
+	function scan() {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				var data = JSON.parse(this.responseText);
+				alert(data);
+			}
+		};
+		xhttp.open("POST", "/get", true);
+		xhttp.send("data=wifiscan");
+	}
+</script>
 </body>
 </html>

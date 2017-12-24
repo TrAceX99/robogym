@@ -1,24 +1,71 @@
 <html>
 <head>
 <title>Offline mode</title>
+<style>
+button.link {
+	display: inline-block;
+	position: relative;
+	background-color: transparent;
+	cursor: pointer;
+	border: 0;
+	padding: 0;
+	color:#00f;
+	text-decoration: underline;
+	font: inherit;
+}
+</style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
+	$(document).ready(function () {
+		getStatus();
+		scan();
+	});
+
 	function scan() {
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
+		var http = new XMLHttpRequest();
+		http.onreadystatechange = function() {
 			if (this.readyState == 4) {
 				var data = JSON.parse(this.responseText);
-                $("#networks").html("");
-                for (var i = 0; i < data.networks; i++) {
-                    $("#networks").append("<a><li>" + i + ": " + data.ssid[i] + ", Ch:" + data.channel[i] + 
-                    " (" + data.rssi[i] + "dBm) " + data.enc[i] + 
-                    (data.connected == data.ssid[i] ? " <- connected" : "") + "</li></a>");
-                }
+				$("#networks").html("");
+				for (var i = 0; i < data.networks; i++) {
+					$("#networks").append("<li>" + i + 
+					": <button class=\"link\" onclick=\"connect(\'" + data.ssid[i] + "\', " 
+					+ "false" + ")\">" +
+					data.ssid[i] + "</button>, Ch:" + data.channel[i] + " (" + data.rssi[i] + "dBm) " +
+					data.enc[i] + (data.connected == data.ssid[i] ? " <- connected" : "") + "</li>");
+				}
 			}
 		};
-		xhttp.open("POST", "/get", true);
-		xhttp.send("data=wifiscan");
-        $("#networks").html("<p>Scanning...</p>");
+		http.open("POST", "/get", true);
+		http.send("request=wifiscan");
+		$("#networks").html("<p>Scanning...</p>");
+	}
+
+	function getStatus () {
+		var http = new XMLHttpRequest();
+		http.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				var data = JSON.parse(this.responseText);
+				if (data.status) $("#status").html("Connected<br>SSID: " + data.ssid + "<br>IP: " + data.ip +
+				"<br>");
+				else $("#status").html("Not connected");
+			}
+		};
+		http.open("POST", "/get", true);
+		http.send("request=wifistatus");
+	}
+
+	function connect(ssid, open) {
+		var pass = "";
+		if (!open) pass = prompt("Password:");
+		var http = new XMLHttpRequest();
+		http.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				alert(this.responseText);
+			}
+		};
+		http.open("POST", "/connect", true);
+		http.send("ssid=" + ssid + "&pass=" + pass);
 	}
 </script>
 </head>
@@ -30,14 +77,19 @@
 		<input type="submit">
 	</form>
 	<p>Or, enter ssid i sifra to connect to wifi:</p>
-	<form action="/connect">
-		<input name="ssid" placeholder="WiFI SSID"><br>
-		<input name="pass" placeholder="WiFi password"><br>
-		<input type="submit">
-	</form>
+	<div>
+		<input id="ssid" placeholder="WiFI SSID"><br>
+		<input type="submit" onclick="connect($('#ssid').val(), false)">
+	</div>
+	<h4>WiFi status:</h4>
+	<div id="status">
+		<p>Refreshing...</p>
+	</div>
+	<button onclick="getStatus()">REFRESH</button>
+	<h4>Available networks:</h4>
 	<ul id="networks">
-        <p>You may also scan for available wifi networks</p>
+		<p>WiFi networks:</p>
 	</ul>
-    <button onclick="scan()">SCAN</button>
+	<button onclick="scan()">SCAN</button>
 </body>
 </html>

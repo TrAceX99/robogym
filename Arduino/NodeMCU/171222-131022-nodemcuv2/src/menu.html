@@ -11,7 +11,8 @@
                 $("#networks").html("");
                 for (var i = 0; i < data.networks; i++) {
                     $("#networks").append("<a><li>" + i + ": " + data.ssid[i] + ", Ch:" + data.channel[i] + 
-                    " (" + data.rssi[i] + "dBm) " + data.enc[i] + "</li></a>");
+                    " (" + data.rssi[i] + "dBm) " + data.enc[i] + 
+                    (data.connected == data.ssid[i] ? " <- connected" : "") + "</li></a>");
                 }
 			}
 		};

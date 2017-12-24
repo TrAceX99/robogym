@@ -36,24 +36,24 @@ void handleRoot() {
 			server.send(200, "text/html", html);
 		} else {
 			Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-			server.sendHeader("Location", "/redirect", true);
+			server.sendHeader("Location", "/menu", true);
 			server.send(307, "text/plain", "");
 			Serial.println("Redirected\n");
 		}
 }
 
 void handleRedirect() {	
-    http.begin("http://" + dataserverIP + "/redirect.html");
+    http.begin("http://" + dataserverIP + "/menu.html");
     int httpCode = http.GET();
     
     if (httpCode > 0) {
-        Serial.println("GET request to redirect.html ok\n");
+        Serial.println("GET request to menu.html ok\n");
         String html = http.getString();
         server.send(200, "text/html", html);
     } else {
         Serial.printf("[REDIRECT] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
         Serial.println("Opening file from flash");
-        File f = SPIFFS.open("/redirect.html", "r");
+        File f = SPIFFS.open("/menu.html", "r");
         if (!f) Serial.println("File open failed!");
         String html = f.readString();
         server.send(200, "text/html", html);
@@ -119,6 +119,7 @@ void handleGet() {
     int8_t networks = WiFi.scanNetworks();
 
     json["networks"] = networks;
+    WiFi.localIP().toString() != "0.0.0.0" ? json["connected"] = ssid : json["connected"] = (char*)NULL;
     JsonArray& j_ssid = json.createNestedArray("ssid");
     JsonArray& j_channel = json.createNestedArray("channel");
     JsonArray& j_rssi = json.createNestedArray("rssi");
@@ -189,7 +190,7 @@ void setup() {
 	server.on("/", handleRoot);
 	server.on("/test", testSubmit);
 	server.on("/submit", HTTP_POST, handleSubmit);
-	server.on("/redirect", handleRedirect);
+	server.on("/menu", handleRedirect);
 	server.on("/offline", handleOffline);
 	server.on("/connect", handleConnect);
 	server.on("/disconnect", handleDisconnect);

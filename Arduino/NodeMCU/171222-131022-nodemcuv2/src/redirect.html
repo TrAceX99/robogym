@@ -9,7 +9,7 @@
 			if (this.readyState == 4) {
 				var data = JSON.parse(this.responseText);
                 $("#networks").html("");
-                for (var i = 0; i < data.n; i++) {
+                for (var i = 0; i < data.networks; i++) {
                     $("#networks").append("<a><li>" + i + ": " + data.ssid[i] + ", Ch:" + data.channel[i] + 
                     " (" + data.rssi[i] + "dBm) " + data.enc[i] + "</li></a>");
                 }

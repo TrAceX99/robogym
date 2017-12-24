@@ -2,7 +2,7 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPClient.h>
 #include "FS.h"
-#include "JSON.h"
+#include <ArduinoJson.h>
 
 #define LED D0
 
@@ -113,44 +113,27 @@ void handleDisconnect() {
 }
 
 void handleGet() {
-	String json = "{";
-	if(server.arg("data") == "wifiscan") {
-		int networks = WiFi.scanNetworks();
-		json += "\"n\":" + String(networks) + ",";
+    StaticJsonBuffer<400> buffer;
+    JsonObject &json = buffer.createObject();
 
-		json += "\"ssid\":[";
-		for (int i = 0; i < networks; i++) {
-			json += "\"" + String(WiFi.SSID(i)) + "\"";
-			if (i < networks - 1) json += ",";
-		}
-		json += "],";
+    int8_t networks = WiFi.scanNetworks();
 
-		json += "\"channel\":[";
-		for (int i = 0; i < networks; i++) {
-			json += "\"" + String(WiFi.channel(i)) + "\"";
-			if (i < networks - 1) json += ",";
-		}
-		json += "],";
+    json["networks"] = networks;
+    JsonArray& j_ssid = json.createNestedArray("ssid");
+    JsonArray& j_channel = json.createNestedArray("channel");
+    JsonArray& j_rssi = json.createNestedArray("rssi");
+    JsonArray& j_enc = json.createNestedArray("enc");
+    for (int8_t i = 0; i < networks; i++) {
+        j_ssid.add(WiFi.SSID(i));
+        j_channel.add(WiFi.channel(i));
+        j_rssi.add(WiFi.RSSI(i));
+        WiFi.encryptionType(i) == ENC_TYPE_NONE ? j_enc.add("open") : j_enc.add("");
+    }
 
-		json += "\"rssi\":[";
-		for (int i = 0; i < networks; i++) {
-			json += "\"" + String(WiFi.RSSI(i)) + "\"";
-			if (i < networks - 1) json += ",";
-		}
-		json += "],";
-
-		json += "\"enc\":[";
-		for (int i = 0; i < networks; i++) {
-			json += "\"";
-			WiFi.encryptionType(i) == ENC_TYPE_NONE ? json += "open" : json += "";
-			json += "\"";
-			if (i < networks - 1) json += ",";
-		}
-		json += "]";
-	}
-	json += "}";
-	server.send(200, "application/json; charset=utf-8", json);
-	Serial.println(json);
+    String stringBuffer;
+    json.printTo(stringBuffer);
+	server.send(200, "application/json; charset=utf-8", stringBuffer);
+    Serial.println(stringBuffer);
 }
 
 void handleNotFound() {	
@@ -216,16 +199,6 @@ void setup() {
 	server.begin();
 	Serial.println("Server started!\nAttempting to connect to default AP...\n");
 	connectWiFi();
-
-	// library test
-	int arr[3] = {2, 3, 4};
-	String str = "tes464646";
-	JSON json(10);
-	json.add("IPrezime", str.c_str());
-    json.add("broj", 234543);
-    json.add("array", arr, 3);
-    json.add("arr2", "test4");
-	Serial.println(json.toString() + "\n");
 }
 
 void loop() {

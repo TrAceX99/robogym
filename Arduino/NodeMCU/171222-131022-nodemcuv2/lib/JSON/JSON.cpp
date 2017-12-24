@@ -42,6 +42,12 @@ void JSON::add (String name, int value) {
     _value[_vars] = String(value);
     _vars++;
 }
+void JSON::add (String name, const char *value) {
+    _name[_vars] = name;
+    _value[_vars] = value;
+    _type[_vars] = string;
+    _vars++;
+}
 void JSON::add (String name, int *value, int size) {
 	_name[_vars] = name;
 	_value[_vars] = "[";
@@ -53,11 +59,16 @@ void JSON::add (String name, int *value, int size) {
     _type[_vars] = arrayString;
 	_vars++;
 }
-void JSON::add (String name, const char *value) {
-    _name[_vars] = name;
-    _value[_vars] = value;
-    _type[_vars] = string;
-    _vars++;
+void JSON::add (String name, String *value, int size) {
+	_name[_vars] = name;
+	_value[_vars] = "[";
+    for (int i = 0; i < size; i++) {
+        _value[_vars] += String(value[i]);
+        if (i < size - 1) _value[_vars] += ",";
+    }
+    _value[_vars] += "]";
+    _type[_vars] = arrayString;
+	_vars++;
 }
 
 // Menja vrednost varijable

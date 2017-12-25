@@ -53,6 +53,7 @@ void handleMenu() {
 	} else {
 		Serial.printf("[REDIRECT] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
 		Serial.println("Opening file from flash");
+		//Change next line pls!!!!!!!!!!!!!!!!!!!!!!!!!!
 		File f = SPIFFS.open("/menu.html", "r");
 		if (!f) Serial.println("File open failed!");
 		String html = f.readString();

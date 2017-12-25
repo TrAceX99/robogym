@@ -6,8 +6,8 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             "name": "PlatformIO Debugger",
-            "target": "d:/Marko/robogym/Arduino/NodeMCU/171222-131022-nodemcuv2/.pioenvs/nodemcuv2/firmware.elf",
-            "gdbpath": "C:/Users/Djole/.platformio/penv/Scripts/piodebuggdb",
+            "target": "d:/robogym/Arduino/NodeMCU/171222-131022-nodemcuv2/.pioenvs/nodemcuv2/firmware.elf",
+            "gdbpath": "C:/Users/Robotika/.platformio/penv/Scripts/piodebuggdb",
             "autorun": [ "source .pioinit" ]
         }
     ]

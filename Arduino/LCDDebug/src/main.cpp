@@ -1,15 +1,25 @@
 #include <Arduino.h>
 #include <LCDDebug.h>
+#include <SoftwareSerial.h>
 
 LCDDebug lcd(2, 3, 4, 5, 6, 7);
+SoftwareSerial mySerial(10, 11);
 
 void setup() {
-    lcd.println("B_LED:");
-    lcd.println("tes2");
-    delay(1000);
+    mySerial.begin(9600);
+    Serial.begin(115);
+    delay (500);
+    Serial.write(0x55);
+    Serial.write(0x71);
+    Serial.write(0xAA);
+    Serial.write(0x00);
+    Serial.write(0x01);
+    Serial.write(0x00);
+    Serial.write(0x96);
 }
 
 void loop() {
-    lcd.println(String(millis()));
-    delay(1258);
+    if (Serial.available()){
+        lcd.raw.print(Serial.read());
+    }
 }

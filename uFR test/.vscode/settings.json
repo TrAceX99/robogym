@@ -2,6 +2,7 @@
     "files.associations": {
         "*.dll": "cpp",
         "iostream": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "ostream": "cpp"
     }
 }

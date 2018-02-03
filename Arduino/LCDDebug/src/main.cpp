@@ -5,21 +5,24 @@
 LCDDebug lcd(2, 3, 4, 5, 6, 7);
 SoftwareSerial mySerial(10, 11);
 
+const byte red[7] = {0x55, 0x71, 0xAA, 0x00, 0x01, 0x00, 0x96};
+const byte redOff[7] = {0x55, 0x71, 0xAA, 0x00, 0x00, 0x00, 0x95};
+const byte get[7] = {0x55, 0x10, 0xAA, 0x00, 0x00, 0x00, 0xF6};
+
 void setup() {
-    mySerial.begin(9600);
-    Serial.begin(115);
-    delay (500);
-    Serial.write(0x55);
-    Serial.write(0x71);
-    Serial.write(0xAA);
-    Serial.write(0x00);
-    Serial.write(0x01);
-    Serial.write(0x00);
-    Serial.write(0x96);
+    mySerial.begin(115200);
+	Serial.begin(115200);
+    delay(1000);
+    mySerial.write(red, sizeof(red));
+	delay(2000);
+	mySerial.write(redOff, 7);
 }
 
 void loop() {
+    if (mySerial.available()){
+        Serial.write(mySerial.read());
+    }
     if (Serial.available()){
-        lcd.raw.print(Serial.read());
+        mySerial.write(Serial.read());
     }
 }

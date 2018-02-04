@@ -1,7 +1,7 @@
 /// Digital Logic uFR NFC card reader library for Arduino
-/// 
+///
 /// Based on IS21 DLogic serial communication protocol
-/// 
+///
 /// Version: 1.0.0
 /// Copyright 2018 Marko Djordjevic
 
@@ -73,18 +73,18 @@
 #define WRONG_ACCESS_BITS_VALUES				0x0D
 #define AUTH_ERROR								0x0E
 #define PARAMETERS_ERROR						0x0F
+#define COMMUNICATION_TIMEOUT                   0x50
 #define WRITE_VERIFICATION_ERROR				0x70
 #define BUFFER_SIZE_EXCEEDED					0x71
 #define VALUE_BLOCK_INVALID						0x72
 #define VALUE_BLOCK_ADDR_INVALID				0x73
 #define VALUE_BLOCK_MANIPULATION_ERROR			0x74
 
-enum PACKET_TYPE {
-	PACKET_ACK,
-	PACKET_ERR,
-	PACKET_RSP,
-	PACKET_NONE,
-	PACKET_TIMEOUT
+enum PacketType {
+	PACKET_ACK = ACK_HEADER,
+	PACKET_ERR = ERR_HEADER,
+	PACKET_RSP = RESPONSE_HEADER,
+	PACKET_TIMEOUT = COMMUNICATION_TIMEOUT
 };
 
 class uFR {
@@ -95,11 +95,13 @@ class uFR {
 		uint8_t setRedLED(bool state);
 	private:
 		SoftwareSerial readerSerial;
+		void flushSerial(); // Flush serial input buffer
 
 		void sendCMDPacket(uint8_t command, uint8_t EXTlength = 0, uint8_t par0 = 0, uint8_t par1 = 0);
 		void sendEXPPacket(uint8_t *packet, uint8_t length);
 
-		PACKET_TYPE readPacket(uint8_t *response);
+		PacketType readPacket(uint8_t *response);
 
+		uint8_t validatePacket(uint8_t *packet, PacketType type);
 		uint8_t checksum(uint8_t *packet, uint8_t size = 6);
 };

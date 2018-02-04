@@ -1,17 +1,17 @@
+#include <SoftwareSerial.h>
 #include <Arduino.h>
 #include <uFR.h>
-
-const byte red[7] = {0x55, 0x71, 0xAA, 0x00, 0x01, 0x00, 0x96};
-const byte redOff[7] = {0x55, 0x71, 0xAA, 0x00, 0x00, 0x00, 0x95};
-const byte get[7] = {0x55, 0x10, 0xAA, 0x00, 0x00, 0x00, 0xF6};
 
 uFR reader(10, 11);
 
 void setup() {
-	Serial.begin(115200);
-	reader.begin();
+	Serial.begin(9600);
+    reader.begin();
 }
 
 void loop() {
-
+    Serial.println(reader.setRedLED(HIGH), HEX);
+    delay(2000);
+    Serial.println(reader.setRedLED(LOW), HEX);
+    delay(2000);
 }

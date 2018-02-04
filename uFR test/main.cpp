@@ -28,6 +28,10 @@ main () {
     uint16_t dalMeZezas;
     
     if(ReaderOpen() == 0) {
+        uint32_t type;
+        GetReaderType(&type);
+        cout << "Reader OK. Type:" << uppercase << showbase << hex << type << endl;
+        Sleep(1000);
         while(true) {
             cout << "Press any key to continue, W to write access code to card, F to format card, esc to exit" << endl;
             char a = getch();

@@ -13,6 +13,13 @@
 
 // Communication constants
 #define MAX_PACKET_LENGTH	64
+#define HEADER_BYTE			0
+#define CMD_BYTE			1
+#define TRAILER_BYTE		2
+#define EXT_LENGTH_BYTE		3
+#define PAR0_BYTE			4
+#define PAR1_BYTE			5
+#define CHKSUM_BYTE			6
 #define PACKET_LENGTH		7
 #define CMD_HEADER			0x55
 #define ACK_HEADER			0xAC
@@ -55,11 +62,14 @@
 #define SET_UART_SPEED				0x70
 #define RED_LIGHT_CONTROL			0x71
 
-
 // ERR codes
 #define OK										0x00
 #define COMMUNICATION_ERROR						0x01
+#define COMMUNICATION_TIMEOUT                   0x50
+#define COMMUNICATION_TIMEOUT_EXT				0x51
 #define CHKSUM_ERROR							0x02
+#define CHKSUM_ERROR_RESPONSE					0x52
+#define CHKSUM_ERROR_EXT						0x53
 #define READING_ERROR							0x03
 #define WRITING_ERROR							0x04
 #define BUFFER_OVERFLOW							0x05
@@ -73,12 +83,55 @@
 #define WRONG_ACCESS_BITS_VALUES				0x0D
 #define AUTH_ERROR								0x0E
 #define PARAMETERS_ERROR						0x0F
-#define COMMUNICATION_TIMEOUT                   0x50
 #define WRITE_VERIFICATION_ERROR				0x70
 #define BUFFER_SIZE_EXCEEDED					0x71
 #define VALUE_BLOCK_INVALID						0x72
 #define VALUE_BLOCK_ADDR_INVALID				0x73
 #define VALUE_BLOCK_MANIPULATION_ERROR			0x74
+
+// MIFARE CLASSIC type id's:
+#define MIFARE_CLASSIC_1k               0x08
+#define MF1ICS50                        0x08
+#define SLE66R35                        0x88 // Infineon = Mifare Classic 1k
+#define MIFARE_CLASSIC_4k               0x18
+#define MF1ICS70                        0x18
+#define MIFARE_CLASSIC_MINI             0x09
+#define MF1ICS20                        0x09
+
+//DLOGIC CARD TYPE
+#define TAG_UNKNOWN						0
+#define DL_MIFARE_ULTRALIGHT			0x01
+#define DL_MIFARE_ULTRALIGHT_EV1_11		0x02
+#define DL_MIFARE_ULTRALIGHT_EV1_21		0x03
+#define DL_MIFARE_ULTRALIGHT_C			0x04
+#define DL_NTAG_203						0x05
+#define DL_NTAG_210						0x06
+#define DL_NTAG_212						0x07
+#define DL_NTAG_213						0x08
+#define DL_NTAG_215						0x09
+#define DL_NTAG_216						0x0A
+#define DL_MIKRON_MIK640D				0x0B
+#define NFC_T2T_GENERIC					0x0C
+
+#define DL_MIFARE_MINI					0x20
+#define	DL_MIFARE_CLASSIC_1K			0x21
+#define DL_MIFARE_CLASSIC_4K			0x22
+#define DL_MIFARE_PLUS_S_2K				0x23
+#define DL_MIFARE_PLUS_S_4K				0x24
+#define DL_MIFARE_PLUS_X_2K				0x25
+#define DL_MIFARE_PLUS_X_4K				0x26
+#define DL_MIFARE_DESFIRE				0x27
+#define DL_MIFARE_DESFIRE_EV1_2K		0x28
+#define DL_MIFARE_DESFIRE_EV1_4K		0x29
+#define DL_MIFARE_DESFIRE_EV1_8K		0x2A
+#define DL_MIFARE_DESFIRE_EV2_2K		0x2B
+#define DL_MIFARE_DESFIRE_EV2_4K		0x2C
+#define DL_MIFARE_DESFIRE_EV2_8K		0x2D
+
+#define DL_UNKNOWN_ISO_14443_4			0x40
+#define DL_GENERIC_ISO14443_4			0x40
+#define DL_GENERIC_ISO14443_TYPE_B		0x41
+#define DL_IMEI_UID						0x80
 
 enum PacketType {
 	PACKET_ACK = ACK_HEADER,
@@ -90,18 +143,23 @@ enum PacketType {
 class uFR {
 	public:
 		uFR(uint8_t rx, uint8_t tx);
+
 		void begin(unsigned long baud = 115200);
 		inline void end() { readerSerial.end(); }
+
 		uint8_t setRedLED(bool state);
+		uint8_t getReaderType(uint8_t *readerType); // 4-byte array (little-endian)
+		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType); // 4-byte array (little-endian)
 	private:
 		SoftwareSerial readerSerial;
 		void flushSerial(); // Flush serial input buffer
 
-		void sendCMDPacket(uint8_t command, uint8_t EXTlength = 0, uint8_t par0 = 0, uint8_t par1 = 0);
-		void sendEXPPacket(uint8_t *packet, uint8_t length);
+		void sendPacketCMD(uint8_t command, uint8_t EXTlength = 0, uint8_t par0 = 0, uint8_t par1 = 0);
+		void sendPacketEXT(uint8_t *packet, uint8_t length);
 
 		PacketType readPacket(uint8_t *response);
+		uint8_t readPacketEXT(uint8_t *response, uint8_t length);
 
-		uint8_t validatePacket(uint8_t *packet, PacketType type);
-		uint8_t checksum(uint8_t *packet, uint8_t size = 6);
+		uint8_t validatePacket(uint8_t *packet, PacketType type, uint8_t command);
+		uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
 };

@@ -5,16 +5,21 @@
 uFR reader(10, 11);
 LCDDebug lcd(3, 4, 5, 6, 7, 8);
 
+#define RELAY_PIN 2
+
 void setup() {
-	//Serial.begin(9600);
+    pinMode(RELAY_PIN, OUTPUT);
+    digitalWrite(RELAY_PIN, LOW);
     reader.begin();
-    delay(1000);
+    delay(2000);
     uint8_t type[4];
-    lcd.raw.print("Reader type:");
+    lcd.raw.print(reader.getReaderType(type), HEX);
+    lcd.raw.print(", Reader type:");
     lcd.raw.setCursor(0, 1);
     lcd.raw.print("0x");
-    for (int i = 4; i >= 0; i--)
+    for (int i = 0; i < 4; i++) {
         lcd.raw.print(type[i], HEX);
+    }
     delay(5000);
 }
 
@@ -25,14 +30,16 @@ void loop() {
     if (code == 0) {
         lcd.raw.clear();
         lcd.raw.print("ID: 0x");
-        for (int i = 4; i >= 0; i--)
+        for (int i = 0; i < 4; i++)
             lcd.raw.print(cardID[i], HEX);
         lcd.raw.setCursor(0, 1);
         lcd.raw.print("Type: 0x");
         lcd.raw.print(cardType, HEX);
-        delay(1000);
+        digitalWrite(RELAY_PIN, HIGH);
+        delay(3000);
+        digitalWrite(RELAY_PIN, LOW);
     } else {
         lcd.println(".");
     }
-    delay (1000);
+    delay (200);
 }

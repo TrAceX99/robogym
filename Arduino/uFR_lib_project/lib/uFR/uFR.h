@@ -148,8 +148,8 @@ class uFR {
 		inline void end() { readerSerial.end(); }
 
 		uint8_t setRedLED(bool state);
-		uint8_t getReaderType(uint8_t *readerType); // 4-byte array (little-endian)
-		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType); // 4-byte array (little-endian)
+		uint8_t getReaderType(uint8_t *readerType); // 4-byte array
+		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType); // 4-byte array
 	private:
 		SoftwareSerial readerSerial;
 		void flushSerial(); // Flush serial input buffer

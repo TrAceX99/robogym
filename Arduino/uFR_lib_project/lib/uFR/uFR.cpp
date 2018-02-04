@@ -127,7 +127,8 @@ uint8_t uFR::getReaderType(uint8_t *readerType) {
 	errorCode = readPacketEXT(packetEXT, lengthEXT);
 	if (errorCode != 0) return errorCode;
 
-	readerType = packetEXT;	
+    for(int i = 0; i < lengthEXT; i++)
+        readerType[i] = packetEXT[lengthEXT - 1 - i];
 	return 0;
 }
 
@@ -146,7 +147,8 @@ uint8_t uFR::getCardID(uint8_t *cardID, uint8_t *cardType) {
 	errorCode = readPacketEXT(packetEXT, lengthEXT);
 	if (errorCode != 0) return errorCode;
 
-	cardID = packetEXT;
 	*cardType = packet[PAR0_BYTE];
+	for(int i = 0; i < lengthEXT; i++)
+        cardID[i] = packetEXT[lengthEXT - 1 - i];
 	return 0;
 }

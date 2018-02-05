@@ -127,8 +127,8 @@ uint8_t uFR::getReaderType(uint8_t *readerType) {
 	errorCode = readPacketEXT(packetEXT, lengthEXT);
 	if (errorCode != 0) return errorCode;
 
-    for(int i = 0; i < lengthEXT; i++)
-        readerType[i] = packetEXT[lengthEXT - 1 - i];
+	for(int i = 0; i < lengthEXT; i++)
+		readerType[i] = packetEXT[lengthEXT - 1 - i];
 	return 0;
 }
 
@@ -141,7 +141,7 @@ uint8_t uFR::getCardID(uint8_t *cardID, uint8_t *cardType) {
 
 	uint8_t errorCode = validatePacket(packet, PACKET_RSP, GET_CARD_ID);
 	if (errorCode != 0) return errorCode;
-	
+
 	uint8_t lengthEXT = packet[EXT_LENGTH_BYTE] - 1;
 	uint8_t packetEXT[lengthEXT];
 	errorCode = readPacketEXT(packetEXT, lengthEXT);
@@ -149,6 +149,6 @@ uint8_t uFR::getCardID(uint8_t *cardID, uint8_t *cardType) {
 
 	*cardType = packet[PAR0_BYTE];
 	for(int i = 0; i < lengthEXT; i++)
-        cardID[i] = packetEXT[lengthEXT - 1 - i];
+		cardID[i] = packetEXT[lengthEXT - 1 - i];
 	return 0;
 }

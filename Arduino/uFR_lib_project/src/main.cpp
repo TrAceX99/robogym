@@ -11,7 +11,8 @@ void setup() {
 	pinMode(RELAY_PIN, OUTPUT);
 	digitalWrite(RELAY_PIN, LOW);
 	reader.begin();
-	delay(2000);
+	delay(500);
+	reader.setRedLED(HIGH);
 	uint8_t type[4];
 	lcd.raw.print(reader.getReaderType(type), HEX);
 	lcd.raw.print(", Reader type:");
@@ -21,6 +22,7 @@ void setup() {
 		lcd.raw.print(type[i], HEX);
 	}
 	delay(5000);
+	reader.setRedLED(LOW);
 }
 
 void loop() {
@@ -39,7 +41,7 @@ void loop() {
 		delay(3000);
 		digitalWrite(RELAY_PIN, LOW);
 	} else {
-		lcd.println(".");
+		lcd.println(String(code, HEX));
 	}
-	delay (200);
+	delay(200);
 }

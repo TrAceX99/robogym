@@ -98,7 +98,7 @@
 #define MIFARE_CLASSIC_MINI 0x09
 #define MF1ICS20            0x09
 
-//DLOGIC CARD TYPE
+// DLOGIC CARD TYPE
 #define TAG_UNKNOWN                 0
 #define DL_MIFARE_ULTRALIGHT        0x01
 #define DL_MIFARE_ULTRALIGHT_EV1_11 0x02
@@ -131,11 +131,20 @@
 #define DL_GENERIC_ISO14443_TYPE_B  0x41
 #define DL_IMEI_UID                 0x80
 
+// Function return sizes in bytes
+#define READER_TYPE_SIZE   4
+#define READER_SERIAL_SIZE 4
+#define READER_KEY_SIZE    6
+#define USER_DATA_SIZE     16
+#define CARD_ID_SIZE       4
+#define CARD_ID_EX_SIZE    10
+
 enum PacketType {
 	PACKET_ACK = ACK_HEADER,
 	PACKET_ERR = ERR_HEADER,
-	PACKET_RSP = RESPONSE_HEADER,
-	PACKET_TIMEOUT = COMMUNICATION_TIMEOUT
+	PACKET_RSP = RESPONSE_HEADER
+	// Obsolete
+	//PACKET_TIMEOUT = COMMUNICATION_TIMEOUT
 };
 
 class uFR {
@@ -155,9 +164,31 @@ class uFR {
 		void sendPacketCMD(uint8_t command, uint8_t EXTlength = 0, uint8_t par0 = 0, uint8_t par1 = 0);
 		void sendPacketEXT(uint8_t *packet, uint8_t length);
 
-		PacketType readPacket(uint8_t *response);
-		uint8_t readPacketEXT(uint8_t *response, uint8_t length);
-
-		uint8_t validatePacket(uint8_t *packet, PacketType type, uint8_t command);
-		uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
+		class Packet {
+			public:
+				Packet(SoftwareSerial *);
+				static uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
+				inline uint8_t getErrorCode() { return errorCode; }
+				inline uint8_t getLength() { return length; }
+			protected:
+				uint8_t errorCode = 0;
+				uint8_t length = PACKET_LENGTH;
+				uint8_t *data;
+				SoftwareSerial *serial;
+		};
+		class CommonPacket : public Packet {
+			uint8_t read(uint8_t *response);
+			uint8_t validate(uint8_t *packet, PacketType type, uint8_t command);
+			public:
+				CommonPacket(SoftwareSerial *, PacketType type, uint8_t command);
+				~CommonPacket();
+				inline uint8_t operator[] (uint8_t i) { return data[i]; }
+		};
+		class EXTPacket : public Packet {
+			uint8_t read(uint8_t *response, uint8_t length);
+			public:
+				EXTPacket(SoftwareSerial *, uint8_t length);
+				~EXTPacket();
+				void copyData(uint8_t *array, uint16_t start, uint16_t length);
+		};
 };

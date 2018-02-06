@@ -2,7 +2,18 @@
 
 uFR::uFR(uint8_t rx, uint8_t tx) : readerSerial(SoftwareSerial(rx, tx)) {}
 
+uFR::uFR(uint8_t rx, uint8_t tx, uint8_t reset) : readerSerial(SoftwareSerial(rx, tx)) {
+	pinMode(reset, OUTPUT);
+	digitalWrite(reset, HIGH);
+	resetPin = reset;
+}
+
 void uFR::begin(unsigned long baud) {
+	if(resetPin != 0) {
+		delay(10);
+		digitalWrite(resetPin, LOW);
+	}
+	delay(1000);
 	readerSerial.begin(baud);
 }
 

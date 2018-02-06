@@ -150,6 +150,7 @@ enum PacketType {
 class uFR {
 	public:
 		uFR(uint8_t rx, uint8_t tx);
+		uFR(uint8_t rx, uint8_t tx, uint8_t reset); // Delays 1s
 
 		void begin(unsigned long baud = 115200);
 		inline void end() { readerSerial.end(); }
@@ -159,6 +160,7 @@ class uFR {
 		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType); // 4-byte array
 	private:
 		SoftwareSerial readerSerial;
+		uint8_t resetPin = 0;
 		void flushSerial(); // Flush serial input buffer
 
 		void sendPacketCMD(uint8_t command, uint8_t EXTlength = 0, uint8_t par0 = 0, uint8_t par1 = 0);

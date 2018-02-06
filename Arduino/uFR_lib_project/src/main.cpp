@@ -2,7 +2,7 @@
 #include <uFR.h>
 #include <LCDDebug.h>
 
-uFR reader(10, 11);
+uFR reader(10, 11, 12);
 LCDDebug lcd(3, 4, 5, 6, 7, 8);
 
 #define RELAY_PIN 2

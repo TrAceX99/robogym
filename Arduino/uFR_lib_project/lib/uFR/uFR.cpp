@@ -64,7 +64,7 @@ uint8_t uFR::setRedLED(bool state) {
 	return packet.getErrorCode();
 }
 
-uint8_t uFR::getReaderType(uint8_t *readerType) {
+uint8_t uFR::getReaderType(uint8_t readerType[4]) {
 	flushSerial();
 	sendPacketCMD(GET_READER_TYPE);
 
@@ -78,7 +78,7 @@ uint8_t uFR::getReaderType(uint8_t *readerType) {
 	return 0;
 }
 
-uint8_t uFR::getCardID(uint8_t *cardID, uint8_t *cardType) {
+uint8_t uFR::getCardID(uint8_t cardID[4], uint8_t *cardType) {
 	flushSerial();
 	sendPacketCMD(GET_CARD_ID);
 

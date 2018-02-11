@@ -161,10 +161,10 @@ class uFR {
 		uint8_t setRedLED(bool state);
 
 		// Gets reader type as a 4-byte array
-		uint8_t getReaderType(uint8_t *readerType);
+		uint8_t getReaderType(uint8_t readerType[READER_TYPE_SIZE]);
 
 		// Gets card ID that is present in reader's RF field as a 4-byte array. Obsolete
-		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType);
+		uint8_t getCardID(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType);
 	private:
 		SoftwareSerial readerSerial;
 		uint8_t resetPin = 0;
@@ -190,8 +190,8 @@ class uFR {
 		};
 		class CommonPacket : public Packet {
 			// Returns error code
-			uint8_t read(uint8_t *response);
-			uint8_t validate(uint8_t *packet, PacketType type, uint8_t command);
+			uint8_t read(uint8_t response[PACKET_LENGTH]);
+			uint8_t validate(uint8_t packet[PACKET_LENGTH], PacketType type, uint8_t command);
 			public:
 				CommonPacket(PacketType type, uint8_t command);
 				~CommonPacket();

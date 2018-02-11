@@ -27,7 +27,7 @@ uint8_t uFR::Packet::checksum(uint8_t *packet, uint8_t size) {
 	return result + 0x07;
 }
 
-uint8_t uFR::CommonPacket::validate(uint8_t *packet, PacketType type, uint8_t command) {
+uint8_t uFR::CommonPacket::validate(uint8_t packet[PACKET_LENGTH], PacketType type, uint8_t command) {
 	if (checksum(packet) != packet[CHKSUM_BYTE]) return CHKSUM_ERROR_RESPONSE;
 	if (packet[HEADER_BYTE] == ERR_HEADER) {
 		if (packet[TRAILER_BYTE] == ERR_TRAILER) return packet[CMD_BYTE];
@@ -47,7 +47,7 @@ uint8_t uFR::CommonPacket::validate(uint8_t *packet, PacketType type, uint8_t co
 	return 0;
 }
 
-uint8_t uFR::CommonPacket::read(uint8_t *response) {
+uint8_t uFR::CommonPacket::read(uint8_t response[PACKET_LENGTH]) {
 	unsigned long time = millis();
 	uint8_t incoming = 0;
 	// Read bytes until header found

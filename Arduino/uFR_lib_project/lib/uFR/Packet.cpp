@@ -1,10 +1,8 @@
 #include "uFR.h"
 
-uFR::Packet::Packet(SoftwareSerial *s) {
-	serial = s;
-}
+SoftwareSerial* uFR::Packet::serial;
 
-uFR::CommonPacket::CommonPacket(SoftwareSerial *s, PacketType type, uint8_t command) : Packet(s) {
+uFR::CommonPacket::CommonPacket(PacketType type, uint8_t command) {
 	data = new uint8_t[PACKET_LENGTH];
 	errorCode = read(data);
 	if (errorCode == 0) errorCode = validate(data, type, command);
@@ -13,7 +11,7 @@ uFR::CommonPacket::~CommonPacket() {
 	delete[] data;
 }
 
-uFR::EXTPacket::EXTPacket(SoftwareSerial *s, uint8_t length) : Packet(s) {
+uFR::EXTPacket::EXTPacket(uint8_t length) {
 	data = new uint8_t[length];
 	errorCode = read(data, length);
 }

@@ -175,22 +175,21 @@ class uFR {
 
 		class Packet {
 			public:
-				Packet(SoftwareSerial *);
 				static uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
 				inline uint8_t getErrorCode() { return errorCode; }
 				inline uint8_t getLength() { return length; }
+				static SoftwareSerial *serial;
 			protected:
 				uint8_t errorCode = 0;
 				uint8_t length = PACKET_LENGTH;
 				uint8_t *data;
-				SoftwareSerial *serial;
 		};
 		class CommonPacket : public Packet {
 			// Returns error code
 			uint8_t read(uint8_t *response);
 			uint8_t validate(uint8_t *packet, PacketType type, uint8_t command);
 			public:
-				CommonPacket(SoftwareSerial *, PacketType type, uint8_t command);
+				CommonPacket(PacketType type, uint8_t command);
 				~CommonPacket();
 				inline uint8_t operator[] (uint8_t i) { return data[i]; }
 		};
@@ -198,7 +197,7 @@ class uFR {
 			// Returns error code, reads AND validates
 			uint8_t read(uint8_t *response, uint8_t length);
 			public:
-				EXTPacket(SoftwareSerial *, uint8_t length);
+				EXTPacket(uint8_t length);
 				~EXTPacket();
 				void copyData(uint8_t *array, uint16_t start, uint16_t length);
 		};

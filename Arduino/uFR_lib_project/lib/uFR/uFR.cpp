@@ -16,6 +16,14 @@ void uFR::begin(unsigned long baud) {
 	readerSerial.begin(baud);
 }
 
+void uFR::hardReset() {
+	if (resetPin != 0) {
+		digitalWrite(resetPin, HIGH);
+		delay(10);
+		digitalWrite(resetPin, LOW);
+	}
+}
+
 void uFR::flushSerial() {
 	while (readerSerial.available() > 0)
 		readerSerial.read();

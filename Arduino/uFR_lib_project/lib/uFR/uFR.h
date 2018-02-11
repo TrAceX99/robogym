@@ -150,8 +150,12 @@ class uFR {
 		uFR(uint8_t rx, uint8_t tx);
 		uFR(uint8_t rx, uint8_t tx, uint8_t reset);
 
-		void begin(unsigned long baud = 115200); // Resets the reader if reset pin is declared; make sure to add delay!
+		void begin(unsigned long baud = 115200); // Resets the reader if reset pin is used; make sure to add delay!
 		inline void end() { readerSerial.end(); }
+		void hardReset(); // Make sure to add delay!
+
+		// All following functions return error codes after execution
+		// If 0 is returned, the function has executed normally
 
 		// Controls the reader's red LED. Green LED stops flashing while red LED is on
 		uint8_t setRedLED(bool state);

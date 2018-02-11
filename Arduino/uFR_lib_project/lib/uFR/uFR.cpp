@@ -1,13 +1,18 @@
 #include "uFR.h"
 
 uFR::uFR(uint8_t rx, uint8_t tx) : readerSerial(SoftwareSerial(rx, tx)) {
-	Packet::serial = &readerSerial;
+	setPacketSerial();
 }
 
 uFR::uFR(uint8_t rx, uint8_t tx, uint8_t reset) : readerSerial(SoftwareSerial(rx, tx)) {
 	pinMode(reset, OUTPUT);
 	digitalWrite(reset, HIGH);
 	resetPin = reset;
+	setPacketSerial();
+}
+
+void uFR::setPacketSerial() {
+	Packet::serial = &readerSerial;
 }
 
 void uFR::begin(unsigned long baud) {

@@ -173,13 +173,17 @@ class uFR {
 		void sendPacketCMD(uint8_t command, uint8_t EXTlength = 0, uint8_t par0 = 0, uint8_t par1 = 0);
 		void sendPacketEXT(uint8_t *packet, uint8_t length);
 
+		void setPacketSerial (); // Sets static protected packet serial pointer
+
 		class Packet {
 			public:
 				static uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
 				inline uint8_t getErrorCode() { return errorCode; }
 				inline uint8_t getLength() { return length; }
-				static SoftwareSerial *serial;
+				inline uint8_t operator[] (uint8_t i) { return data[i]; }
+				friend void uFR::setPacketSerial ();
 			protected:
+				static SoftwareSerial *serial;
 				uint8_t errorCode = 0;
 				uint8_t length = PACKET_LENGTH;
 				uint8_t *data;
@@ -191,7 +195,6 @@ class uFR {
 			public:
 				CommonPacket(PacketType type, uint8_t command);
 				~CommonPacket();
-				inline uint8_t operator[] (uint8_t i) { return data[i]; }
 		};
 		class EXTPacket : public Packet {
 			// Returns error code, reads AND validates

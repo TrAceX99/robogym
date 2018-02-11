@@ -13,7 +13,6 @@ void uFR::begin(unsigned long baud) {
 		delay(10);
 		digitalWrite(resetPin, LOW);
 	}
-	delay(1000);
 	readerSerial.begin(baud);
 }
 

@@ -143,21 +143,24 @@ enum PacketType {
 	PACKET_ACK = ACK_HEADER,
 	PACKET_ERR = ERR_HEADER,
 	PACKET_RSP = RESPONSE_HEADER
-	// Obsolete
-	//PACKET_TIMEOUT = COMMUNICATION_TIMEOUT
 };
 
 class uFR {
 	public:
 		uFR(uint8_t rx, uint8_t tx);
-		uFR(uint8_t rx, uint8_t tx, uint8_t reset); // Delays 1s
+		uFR(uint8_t rx, uint8_t tx, uint8_t reset);
 
-		void begin(unsigned long baud = 115200);
+		void begin(unsigned long baud = 115200); // Resets the reader if reset pin is declared; make sure to add delay!
 		inline void end() { readerSerial.end(); }
 
+		// Controls the reader's red LED. Green LED stops flashing while red LED is on
 		uint8_t setRedLED(bool state);
-		uint8_t getReaderType(uint8_t *readerType); // 4-byte array
-		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType); // 4-byte array
+
+		// Gets reader type as a 4-byte array
+		uint8_t getReaderType(uint8_t *readerType);
+
+		// Gets card ID that is present in reader's RF field as a 4-byte array. Obsolete
+		uint8_t getCardID(uint8_t *cardID, uint8_t *cardType);
 	private:
 		SoftwareSerial readerSerial;
 		uint8_t resetPin = 0;
@@ -179,6 +182,7 @@ class uFR {
 				SoftwareSerial *serial;
 		};
 		class CommonPacket : public Packet {
+			// Returns error code
 			uint8_t read(uint8_t *response);
 			uint8_t validate(uint8_t *packet, PacketType type, uint8_t command);
 			public:
@@ -187,6 +191,7 @@ class uFR {
 				inline uint8_t operator[] (uint8_t i) { return data[i]; }
 		};
 		class EXTPacket : public Packet {
+			// Returns error code, reads AND validates
 			uint8_t read(uint8_t *response, uint8_t length);
 			public:
 				EXTPacket(SoftwareSerial *, uint8_t length);

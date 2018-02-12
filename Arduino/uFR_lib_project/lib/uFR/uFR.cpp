@@ -54,7 +54,7 @@ void uFR::sendPacketCMD(uint8_t command, uint8_t EXTlength, uint8_t par0, uint8_
 		CMD_HEADER,
 		command,
 		CMD_TRAILER,
-		static_cast<uint8_t>(EXTlength + 1), // EXT checksum byte
+		EXTlength,
 		par0,
 		par1,
 		Packet::checksum(packet)
@@ -81,7 +81,7 @@ uint8_t uFR::getReaderType(uint8_t readerType[READER_TYPE_SIZE]) {
 	sendPacketCMD(GET_READER_TYPE);
 	PROCESS_RSP(GET_READER_TYPE);
 	PROCESS_EXT(READER_TYPE_SIZE);
-	extPacket.copyData(readerType, 0, READER_TYPE_SIZE);
+	extPacket.copyDataReverse(readerType, 0, READER_TYPE_SIZE);
 	return 0;
 }
 
@@ -90,13 +90,13 @@ uint8_t uFR::getReaderSerial(uint8_t readerSerialNumber[READER_SERIAL_SIZE]) {
 	sendPacketCMD(GET_READER_SERIAL);
 	PROCESS_RSP(GET_READER_SERIAL);
 	PROCESS_EXT(READER_SERIAL_SIZE);
-	extPacket.copyData(readerSerialNumber, 0, READER_SERIAL_SIZE);
+	extPacket.copyDataReverse(readerSerialNumber, 0, READER_SERIAL_SIZE);
 	return 0;
 }
 
 uint8_t uFR::setReaderKey(uint8_t key[READER_KEY_SIZE], uint8_t index) {
 	flushSerial();
-	sendPacketCMD(READER_KEY_WRITE, READER_KEY_SIZE, index);
+	sendPacketCMD(READER_KEY_WRITE, READER_KEY_SIZE + 1, index);
 	PROCESS_ACK(READER_KEY_WRITE);
 	sendPacketEXT(key, READER_KEY_SIZE);
 	PROCESS_RSP(READER_KEY_WRITE);
@@ -114,10 +114,17 @@ uint8_t uFR::getUserData(uint8_t data[USER_DATA_SIZE]) {
 
 uint8_t uFR::setUserData(uint8_t data[USER_DATA_SIZE]) {
 	flushSerial();
-	sendPacketCMD(USER_DATA_WRITE, USER_DATA_SIZE);
+	sendPacketCMD(USER_DATA_WRITE, USER_DATA_SIZE + 1);
 	PROCESS_ACK(USER_DATA_WRITE);
 	sendPacketEXT(data, USER_DATA_SIZE);
 	PROCESS_RSP(USER_DATA_WRITE);
+	return 0;
+}
+
+uint8_t uFR::softReset() {
+	flushSerial();
+	sendPacketCMD(SELF_RESET);
+	PROCESS_RSP(SELF_RESET);
 	return 0;
 }
 
@@ -126,7 +133,7 @@ uint8_t uFR::getCardID(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType) {
 	sendPacketCMD(GET_CARD_ID);
 	PROCESS_RSP(GET_CARD_ID);
 	PROCESS_EXT(CARD_ID_SIZE);
-	extPacket.copyData(cardID, 0, CARD_ID_SIZE);
+	extPacket.copyDataReverse(cardID, 0, CARD_ID_SIZE);
 	*cardType = rspPacket[PAR0_BYTE];
 	return 0;
 }

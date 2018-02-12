@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-#define TIMEOUT_MS 10
+#define TIMEOUT_MS 100 // Debugging
 
 // Communication constants
 #define MAX_PACKET_LENGTH 64
@@ -152,6 +152,7 @@ class uFR {
 
 		void begin(unsigned long baud = 115200); // Resets the reader if reset pin is used; make sure to add delay!
 		inline void end() { readerSerial.end(); }
+		// Resets through reset pin (if declared)
 		void hardReset(); // Make sure to add delay!
 
 		// All following functions return error codes after execution
@@ -171,6 +172,9 @@ class uFR {
 		uint8_t getUserData(uint8_t data[USER_DATA_SIZE]);
 
 		uint8_t setUserData(uint8_t data[USER_DATA_SIZE]);
+
+		// Sends reset command (add 2s delay!)
+		uint8_t softReset();
 		
 		// Gets card ID that is present in reader's RF field. Obsolete
 		uint8_t getCardID(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType);
@@ -190,6 +194,8 @@ class uFR {
 				static uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
 				inline uint8_t getErrorCode() { return errorCode; }
 				inline uint8_t getLength() { return length; }
+				void copyData(uint8_t *array, uint16_t start, uint16_t length);
+				void copyDataReverse(uint8_t *array, uint16_t start, uint16_t length);
 				inline uint8_t operator[] (uint8_t i) { return data[i]; }
 				friend void uFR::setPacketSerial ();
 			protected:
@@ -212,6 +218,5 @@ class uFR {
 			public:
 				EXTPacket(uint8_t length);
 				~EXTPacket();
-				void copyData(uint8_t *array, uint16_t start, uint16_t length);
 		};
 };

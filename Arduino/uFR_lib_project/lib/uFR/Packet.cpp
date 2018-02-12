@@ -88,7 +88,12 @@ uint8_t uFR::EXTPacket::read(uint8_t *response, uint8_t length) {
 	return 0;
 }
 
-void uFR::EXTPacket::copyData(uint8_t *array, uint16_t start, uint16_t length) {
+void uFR::Packet::copyData(uint8_t *array, uint16_t start, uint16_t length) {
 	for (uint16_t i = 0; i < length; i++)
-		array[i + start] = data[start + length - i - 1];
+		array[i + start] = data[i];
+}
+
+void uFR::Packet::copyDataReverse(uint8_t *array, uint16_t start, uint16_t length) {
+	for (uint16_t i = 0; i < length; i++)
+		array[i + start] = data[length - i - 1];
 }

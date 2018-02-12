@@ -2,26 +2,53 @@
 #include <uFR.h>
 #include <LCDDebug.h>
 
-uFR reader(10, 11);
-LCDDebug lcd(3, 4, 5, 6, 7, 8);
+uFR reader(10, 11, 12);
 
 #define RELAY_PIN 2
 
 void setup() {
 	pinMode(RELAY_PIN, OUTPUT);
+	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(RELAY_PIN, LOW);
+	Serial.begin(9600);
+	delay(100);
 	reader.begin();
-	delay(1000);
+	delay(2000);
 	reader.setRedLED(HIGH);
 	uint8_t type[4];
-	lcd.raw.print(reader.getReaderType(type), HEX);
-	lcd.raw.print(", Reader type:");
-	lcd.raw.setCursor(0, 1);
-	lcd.raw.print("0x");
+	uint8_t serial[4];
+	uint8_t data[16];
+	uint8_t dataIn[16] = "**test464646**";
+	Serial.print(reader.setUserData(dataIn));
+	Serial.print("\nType:");
+	Serial.print(reader.getReaderType(type), HEX);
+	Serial.print(": ");
 	for (int i = 0; i < 4; i++) {
-		lcd.raw.print(type[i], HEX);
+		Serial.print(type[i], HEX);
+		Serial.print(" ");
 	}
-	delay(5000);
+	delay(1000);
+	Serial.print("\nSerial:");
+	Serial.print(reader.getReaderSerial(serial), HEX);
+	Serial.print(": ");
+	for (int i = 0; i < 4; i++) {
+		Serial.print(serial[i], HEX);
+		Serial.print(" ");
+	}
+	delay(1000);
+	Serial.print("\nUser data:");
+	Serial.print(reader.getUserData(data), HEX);
+	Serial.print(": ");
+	for (int i = 0; i < 16; i++) {
+		Serial.print(static_cast<char>(data[i]));
+	}
+	Serial.print(", ili: 0x");
+	for (int i = 0; i < 16; i++) {
+		Serial.print(data[i], HEX);
+	}
+	delay(1000);
+	Serial.println();
+	delay(1000);
 	reader.setRedLED(LOW);
 }
 
@@ -29,19 +56,21 @@ void loop() {
 	uint8_t cardID[4];
 	uint8_t cardType;
 	uint8_t code = reader.getCardID(cardID, &cardType);
+	delay(10);
 	if (code == 0) {
-		lcd.raw.clear();
-		lcd.raw.print("ID: 0x");
-		for (int i = 0; i < 4; i++)
-			lcd.raw.print(cardID[i], HEX);
-		lcd.raw.setCursor(0, 1);
-		lcd.raw.print("Type: 0x");
-		lcd.raw.print(cardType, HEX);
+		Serial.print("\nID: 0x");
+		for (int i = 0; i < 4; i++) {
+				Serial.print(cardID[i], HEX);
+				Serial.print(" ");
+			}
+		Serial.print("\nType: 0x");
+		Serial.print(cardType, HEX);
+		Serial.println();
 		digitalWrite(RELAY_PIN, HIGH);
 		delay(3000);
 		digitalWrite(RELAY_PIN, LOW);
 	} else {
-		lcd.println(String(code, HEX));
+		Serial.print(code, HEX);
 	}
-	delay(200);
+	delay(500);
 }

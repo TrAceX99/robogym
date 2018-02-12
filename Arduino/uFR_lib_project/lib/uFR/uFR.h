@@ -160,11 +160,21 @@ class uFR {
 		// Controls the reader's red LED. Green LED stops flashing while red LED is on
 		uint8_t setRedLED(bool state);
 
-		// Gets reader type as a 4-byte array
 		uint8_t getReaderType(uint8_t readerType[READER_TYPE_SIZE]);
 
-		// Gets card ID that is present in reader's RF field as a 4-byte array. Obsolete
+		uint8_t getReaderSerial(uint8_t readerSerialNumber[READER_SERIAL_SIZE]);
+
+		// Writes MIFARE key into reader EEPROM, at index location (0-31)
+		uint8_t setReaderKey(uint8_t key[READER_KEY_SIZE], uint8_t index);
+
+		// User data are 16 bytes form internal EEPROM
+		uint8_t getUserData(uint8_t data[USER_DATA_SIZE]);
+
+		uint8_t setUserData(uint8_t data[USER_DATA_SIZE]);
+		
+		// Gets card ID that is present in reader's RF field. Obsolete
 		uint8_t getCardID(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType);
+		
 	private:
 		SoftwareSerial readerSerial;
 		uint8_t resetPin = 0;

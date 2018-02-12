@@ -1,5 +1,18 @@
 #include "uFR.h"
 
+#define PROCESS_EXT(length) \
+EXTPacket extPacket(length); \
+if (extPacket.getErrorCode() != 0) return extPacket.getErrorCode()
+
+#define PROCESS_ACK(command) \
+CommonPacket ackPacket(PACKET_ACK, command); \
+if (ackPacket.getErrorCode() != 0) return ackPacket.getErrorCode()
+
+#define PROCESS_RSP(command) \
+CommonPacket rspPacket(PACKET_RSP, command); \
+if (rspPacket.getErrorCode() != 0) return rspPacket.getErrorCode()
+
+
 uFR::uFR(uint8_t rx, uint8_t tx) : readerSerial(SoftwareSerial(rx, tx)) {
 	setPacketSerial();
 }
@@ -41,7 +54,7 @@ void uFR::sendPacketCMD(uint8_t command, uint8_t EXTlength, uint8_t par0, uint8_
 		CMD_HEADER,
 		command,
 		CMD_TRAILER,
-		EXTlength,
+		static_cast<uint8_t>(EXTlength + 1), // EXT checksum byte
 		par0,
 		par1,
 		Packet::checksum(packet)
@@ -59,36 +72,61 @@ void uFR::sendPacketEXT(uint8_t *packet, uint8_t length) {
 uint8_t uFR::setRedLED(bool state) {
 	flushSerial();
 	sendPacketCMD(RED_LIGHT_CONTROL, 0, state);
-
-	CommonPacket packet(PACKET_RSP, RED_LIGHT_CONTROL);
-	return packet.getErrorCode();
-}
-
-uint8_t uFR::getReaderType(uint8_t readerType[4]) {
-	flushSerial();
-	sendPacketCMD(GET_READER_TYPE);
-
-	CommonPacket packet(PACKET_RSP, GET_READER_TYPE);
-	if (packet.getErrorCode() != 0) return packet.getErrorCode();
-
-	EXTPacket extpacket(READER_TYPE_SIZE);
-	if (extpacket.getErrorCode() != 0) return extpacket.getErrorCode();
-	extpacket.copyData(readerType, 0, READER_TYPE_SIZE);
-
+	PROCESS_RSP(RED_LIGHT_CONTROL);
 	return 0;
 }
 
-uint8_t uFR::getCardID(uint8_t cardID[4], uint8_t *cardType) {
+uint8_t uFR::getReaderType(uint8_t readerType[READER_TYPE_SIZE]) {
+	flushSerial();
+	sendPacketCMD(GET_READER_TYPE);
+	PROCESS_RSP(GET_READER_TYPE);
+	PROCESS_EXT(READER_TYPE_SIZE);
+	extPacket.copyData(readerType, 0, READER_TYPE_SIZE);
+	return 0;
+}
+
+uint8_t uFR::getReaderSerial(uint8_t readerSerialNumber[READER_SERIAL_SIZE]) {
+	flushSerial();
+	sendPacketCMD(GET_READER_SERIAL);
+	PROCESS_RSP(GET_READER_SERIAL);
+	PROCESS_EXT(READER_SERIAL_SIZE);
+	extPacket.copyData(readerSerialNumber, 0, READER_SERIAL_SIZE);
+	return 0;
+}
+
+uint8_t uFR::setReaderKey(uint8_t key[READER_KEY_SIZE], uint8_t index) {
+	flushSerial();
+	sendPacketCMD(READER_KEY_WRITE, READER_KEY_SIZE, index);
+	PROCESS_ACK(READER_KEY_WRITE);
+	sendPacketEXT(key, READER_KEY_SIZE);
+	PROCESS_RSP(READER_KEY_WRITE);
+	return 0;
+}
+
+uint8_t uFR::getUserData(uint8_t data[USER_DATA_SIZE]) {
+	flushSerial();
+	sendPacketCMD(USER_DATA_READ);
+	PROCESS_RSP(USER_DATA_READ);
+	PROCESS_EXT(USER_DATA_SIZE);
+	extPacket.copyData(data, 0, USER_DATA_SIZE);
+	return 0;
+}
+
+uint8_t uFR::setUserData(uint8_t data[USER_DATA_SIZE]) {
+	flushSerial();
+	sendPacketCMD(USER_DATA_WRITE, USER_DATA_SIZE);
+	PROCESS_ACK(USER_DATA_WRITE);
+	sendPacketEXT(data, USER_DATA_SIZE);
+	PROCESS_RSP(USER_DATA_WRITE);
+	return 0;
+}
+
+uint8_t uFR::getCardID(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType) {
 	flushSerial();
 	sendPacketCMD(GET_CARD_ID);
-
-	CommonPacket packet(PACKET_RSP, GET_CARD_ID);
-	if (packet.getErrorCode() != 0) return packet.getErrorCode();
-
-	EXTPacket extpacket(CARD_ID_SIZE);
-	if (extpacket.getErrorCode() != 0) return extpacket.getErrorCode();
-	extpacket.copyData(cardID, 0, CARD_ID_SIZE);
-
-	*cardType = packet[PAR0_BYTE];
+	PROCESS_RSP(GET_CARD_ID);
+	PROCESS_EXT(CARD_ID_SIZE);
+	extPacket.copyData(cardID, 0, CARD_ID_SIZE);
+	*cardType = rspPacket[PAR0_BYTE];
 	return 0;
 }

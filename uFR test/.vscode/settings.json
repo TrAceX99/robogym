@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.dll": "cpp",
+        "iostream": "cpp",
+        "thread": "cpp",
+        "ostream": "cpp"
+    }
+}

@@ -1,11 +1,24 @@
 void setup() {
-  pinMode (4, OUTPUT);
-  digitalWrite (4,HIGH); 
+ 
+  pinMode(9, OUTPUT);
+  int A = 1000;
+  
 }
 
-void loop() {
-  delay(500);
-  digitalWrite (4,LOW);
-  delay(500);
-  digitalWrite (4,HIGH);
+void loop() 
+
+{
+  
+  if (A > 1200)
+  {
+  digitalWrite(9, HIGH);
+  delay(300);
+  digitalWrite(9, LOW);
+  delay(150);
+  }
+  else 
+  {
+    digitalWrite(9, LOW);
+    }
+  
 }

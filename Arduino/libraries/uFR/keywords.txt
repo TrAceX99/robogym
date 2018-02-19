@@ -28,5 +28,3 @@ TypeDLogicToString KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-
-NO_CARD LITERAL1

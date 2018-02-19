@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map For uFR
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+uFR	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+hardReset KEYWORD2
+setRedLED KEYWORD2
+getReaderType KEYWORD2
+getReaderSerial KEYWORD2
+setReaderKey KEYWORD2
+getUserData KEYWORD2
+setUserData KEYWORD2
+softReset KEYWORD2
+getCardIDSimple KEYWORD2
+getCardID KEYWORD2
+getCardTypeDLogic KEYWORD2
+TypeDLogicToString KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################

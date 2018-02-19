@@ -3,7 +3,7 @@
 /// Based on IS21 DLogic serial communication protocol
 ///
 /// Version: 1.0.0
-/// Copyright 2018 Marko Djordjevic
+/// 2018 Marko Djordjevic
 
 
 #include <Arduino.h>
@@ -126,7 +126,7 @@
 #define DL_MIFARE_DESFIRE_EV2_2K    0x2B
 #define DL_MIFARE_DESFIRE_EV2_4K    0x2C
 #define DL_MIFARE_DESFIRE_EV2_8K    0x2D
-#define DL_UNKNOWN_ISO_14443_4      0x40
+//#define DL_UNKNOWN_ISO_14443_4      0x40
 #define DL_GENERIC_ISO14443_4       0x40
 #define DL_GENERIC_ISO14443_TYPE_B  0x41
 #define DL_IMEI_UID                 0x80
@@ -176,8 +176,18 @@ class uFR {
 		// Sends reset command (add 2s delay!)
 		uint8_t softReset();
 		
-		// Gets card ID that is present in reader's RF field. Obsolete
-		uint8_t getCardID(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType);
+		// Gets card UID that is present in reader's RF field. Obsolete
+		uint8_t getCardIDSimple(uint8_t cardID[CARD_ID_SIZE], uint8_t *cardType = nullptr);
+
+		// Length - UID size in bytes (4, 7 or 10)
+		uint8_t getCardID(uint8_t cardID[CARD_ID_EX_SIZE], uint8_t *length = nullptr, uint8_t *cardType = nullptr);
+
+		// Card type per DLogic enumeration
+		uint8_t getCardTypeDLogic(uint8_t *cardType);
+
+		// -------------------------------------------------------------
+
+		static const char * TypeDLogicToString(uint8_t type);
 		
 	private:
 		SoftwareSerial readerSerial;

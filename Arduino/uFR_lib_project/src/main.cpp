@@ -54,8 +54,7 @@ void setup() {
 
 void loop() {
 	uint8_t cardID[4];
-	uint8_t cardType;
-	uint8_t code = reader.getCardID(cardID, &cardType);
+	uint8_t code = reader.getCardID(cardID);
 	delay(10);
 	if (code == 0) {
 		Serial.print("\nID: 0x");
@@ -64,7 +63,6 @@ void loop() {
 				Serial.print(" ");
 			}
 		Serial.print("\nType: 0x");
-		Serial.print(cardType, HEX);
 		Serial.println();
 		digitalWrite(RELAY_PIN, HIGH);
 		delay(3000);

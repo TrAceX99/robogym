@@ -22,13 +22,13 @@ void setup() {
   uint8_t type[4];
   lcd.print("Code: ");
   lcd.print(reader.getReaderType(type), HEX);
-  lcd.setCursor(0, 1);
   lcd.print("; Type:");
+  lcd.setCursor(0, 1);
   for (int i = 0; i < 4; i++) {
     lcd.print(type[i], HEX);
     lcd.print(" ");
   }
-  delay(2000);
+  delay(3000);
   lcd.clear();
   lcd.print("Waiting for card");
 }
@@ -38,7 +38,8 @@ void loop() {
   uint8_t length = 0;
   uint8_t code = reader.getCardID(cardID, &length);
   if (code == 0) {
-    lcd.print("\nUID:");
+    lcd.clear();
+    lcd.print("Card found! UID:");
     lcd.setCursor(0, 1);
     for (int i = 0; i < length; i++) {
         lcd.print(cardID[i], HEX);

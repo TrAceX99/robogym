@@ -131,13 +131,25 @@
 #define DL_GENERIC_ISO14443_TYPE_B  0x41
 #define DL_IMEI_UID                 0x80
 
+// Mifare authentication modes
+#define RKA_AUTH1A  0x00
+#define RKA_AUTH1B  0x01
+#define AKM1_AUTH1A 0x20
+#define AKM1_AUTH1B 0x21
+#define AKM2_AUTH1A 0x40
+#define AKM2_AUTH1B 0x41
+#define PK_AUTH1A   0x60
+#define PK_AUTH1B   0x61
+
 // Function return sizes in bytes
+#define MIN_CMD_EXT_SIZE   4
 #define READER_TYPE_SIZE   4
 #define READER_SERIAL_SIZE 4
 #define READER_KEY_SIZE    6
 #define USER_DATA_SIZE     16
 #define CARD_ID_SIZE       4
 #define CARD_ID_EX_SIZE    10
+#define BLOCK_SIZE         16
 
 enum PacketType {
 	PACKET_ACK = ACK_HEADER,
@@ -184,6 +196,9 @@ class uFR {
 
 		// Card type per DLogic enumeration
 		uint8_t getCardTypeDLogic(uint8_t *cardType);
+
+		// Reads block value using direct block adressing (0-63 for Mifare 1K)
+		uint8_t readBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex = 0, bool authModeB = false);
 
 		// -------------------------------------------------------------
 

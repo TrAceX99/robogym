@@ -158,6 +158,20 @@ uint8_t uFR::getCardTypeDLogic(uint8_t *cardType) {
 	return 0;
 }
 
+// Needs testing -----------------------------------------------------------------------
+
+uint8_t uFR::readBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_READ, MIN_CMD_EXT_SIZE + 1, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(BLOCK_READ);
+	uint8_t packet[MIN_CMD_EXT_SIZE] = {address, 0, 0, 0};
+	sendPacketEXT(packet, MIN_CMD_EXT_SIZE);
+	PROCESS_RSP(BLOCK_READ);
+	PROCESS_EXT(BLOCK_SIZE);
+	extPacket.copyData(data, 0, BLOCK_SIZE);
+	return 0;
+}
+
 // ========================================================================================
 
 // Needs beautifying

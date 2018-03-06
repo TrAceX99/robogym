@@ -172,6 +172,43 @@ uint8_t uFR::readBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyInd
 	return 0;
 }
 
+uint8_t uFR::readBlockAKM1(uint8_t data[BLOCK_SIZE], uint8_t address, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_READ, MIN_CMD_EXT_SIZE + 1, authModeB ? AKM1_AUTH1B : AKM1_AUTH1A);
+	PROCESS_ACK(BLOCK_READ);
+	uint8_t packet[MIN_CMD_EXT_SIZE] = {address, 0, 0, 0};
+	sendPacketEXT(packet, MIN_CMD_EXT_SIZE);
+	PROCESS_RSP(BLOCK_READ);
+	PROCESS_EXT(BLOCK_SIZE);
+	extPacket.copyData(data, 0, BLOCK_SIZE);
+	return 0;
+}
+
+uint8_t uFR::readBlockPK(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t key[READER_KEY_SIZE], bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_READ, 11, authModeB ? PK_AUTH1B : PK_AUTH1A);
+	PROCESS_ACK(BLOCK_READ);
+	uint8_t packet[10] = {address, 0, 0, 0, key[0], key[1], key[2], key[3], key[4], key[5]};
+	sendPacketEXT(packet, 10);
+	PROCESS_RSP(BLOCK_READ);
+	PROCESS_EXT(BLOCK_SIZE);
+	extPacket.copyData(data, 0, BLOCK_SIZE);
+	return 0;
+}
+
+uint8_t uFR::writeBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_WRITE, 21, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(BLOCK_WRITE);
+	uint8_t packet[20] = {address, 0, 0, 0};
+	for (uint8_t i = 0; i < BLOCK_SIZE; i++) {
+		packet[i + 4] = data[i];
+	}
+	sendPacketEXT(packet, 20);
+	PROCESS_RSP(BLOCK_WRITE);
+	return 0;
+}
+
 // ========================================================================================
 
 // Needs beautifying

@@ -200,6 +200,15 @@ class uFR {
 		// Reads block value using direct block adressing (0-63 for Mifare 1K)
 		uint8_t readBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex = 0, bool authModeB = false);
 
+		// Automatic key mode
+		uint8_t readBlockAKM1(uint8_t data[BLOCK_SIZE], uint8_t address, bool authModeB = false);
+
+		// Provided key mode
+		uint8_t readBlockPK(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t key[READER_KEY_SIZE], bool authModeB = false);
+
+		// Writes whole block of data using direct block adressing (0-63 for Mifare 1K)
+		uint8_t writeBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex = 0, bool authModeB = false);
+
 		// -------------------------------------------------------------
 
 		static const char * TypeDLogicToString(uint8_t type);

@@ -32,7 +32,7 @@ void loop() {
 
 // Obavezno pin 2 za input !!!
 
-unsigned long count = 0;
+volatile unsigned long count = 0;
 unsigned long timer = 0;
 
 void setup() {

@@ -206,8 +206,14 @@ class uFR {
 		// Provided key mode
 		uint8_t readBlockPK(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t key[READER_KEY_SIZE], bool authModeB = false);
 
-		// Writes whole block of data using direct block adressing (0-63 for Mifare 1K)
+		// Writes whole block of data using direct block adressing (0-63 for Mifare 1K), reader key mode
 		uint8_t writeBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex = 0, bool authModeB = false);
+
+		// Linear data read (address to address + length); possibly doesn't work with length > 64
+		uint8_t readLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex = 0, bool authModeB = false);
+
+		// Reader key mode
+		uint8_t writeLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex = 0, bool authModeB = false);
 
 		// -------------------------------------------------------------
 
@@ -226,6 +232,7 @@ class uFR {
 		class Packet {
 			public:
 				static uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
+				static void append(uint8_t *array, uint8_t *data, uint16_t length, uint16_t start = 0);
 				inline uint8_t getErrorCode() { return errorCode; }
 				inline uint8_t getLength() { return length; }
 				void copyData(uint8_t *array, uint16_t start, uint16_t length);

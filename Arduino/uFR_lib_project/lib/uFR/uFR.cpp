@@ -201,11 +201,43 @@ uint8_t uFR::writeBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIn
 	sendPacketCMD(BLOCK_WRITE, 21, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
 	PROCESS_ACK(BLOCK_WRITE);
 	uint8_t packet[20] = {address, 0, 0, 0};
-	for (uint8_t i = 0; i < BLOCK_SIZE; i++) {
-		packet[i + 4] = data[i];
-	}
+	Packet::append(packet, data, BLOCK_SIZE, 4);
 	sendPacketEXT(packet, 20);
 	PROCESS_RSP(BLOCK_WRITE);
+	return 0;
+}
+
+uint8_t uFR::readLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(LINEAR_READ, 5, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(LINEAR_READ);
+	// low byte, high byte (little-endian)
+	uint8_t packet[4] = {
+		static_cast<uint8_t>(address & 0xFF),
+		static_cast<uint8_t>(address >> 8),
+		static_cast<uint8_t>(length & 0xFF),
+		static_cast<uint8_t>(length >> 8)
+	};
+	sendPacketEXT(packet, 4);
+	PROCESS_RSP(LINEAR_READ);
+	PROCESS_EXT(length);
+	extPacket.copyData(data, 0, length);
+	return 0;
+}
+
+uint8_t uFR::writeLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(LINEAR_WRITE, length + 5, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(LINEAR_WRITE);
+	uint8_t packet[length + 4] = {
+		static_cast<uint8_t>(address & 0xFF),
+		static_cast<uint8_t>(address >> 8),
+		static_cast<uint8_t>(length & 0xFF),
+		static_cast<uint8_t>(length >> 8)
+	};
+	Packet::append(packet, data, length, 4);
+	sendPacketEXT(packet, length + 4);
+	PROCESS_RSP(LINEAR_WRITE);
 	return 0;
 }
 

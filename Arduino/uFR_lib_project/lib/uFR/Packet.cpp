@@ -27,6 +27,12 @@ uint8_t uFR::Packet::checksum(uint8_t *packet, uint8_t size) {
 	return result + 0x07;
 }
 
+void uFR::Packet::append(uint8_t *array, uint8_t *data, uint16_t length, uint16_t start) {
+	for (uint8_t i = 0; i < length; i++) {
+		array[i + start] = data[i];
+	}
+}
+
 uint8_t uFR::CommonPacket::validate(uint8_t packet[PACKET_LENGTH], PacketType type, uint8_t command) {
 	if (checksum(packet) != packet[CHKSUM_BYTE]) return CHKSUM_ERROR_RESPONSE;
 	if (packet[HEADER_BYTE] == ERR_HEADER) {

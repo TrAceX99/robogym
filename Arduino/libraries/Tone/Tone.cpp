@@ -23,7 +23,7 @@
 
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-#include <wiring.h>
+#include <wiring_private.h>
 #include <pins_arduino.h>
 #include "Tone.h"
 

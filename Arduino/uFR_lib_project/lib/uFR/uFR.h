@@ -131,13 +131,25 @@
 #define DL_GENERIC_ISO14443_TYPE_B  0x41
 #define DL_IMEI_UID                 0x80
 
+// Mifare authentication modes
+#define RKA_AUTH1A  0x00
+#define RKA_AUTH1B  0x01
+#define AKM1_AUTH1A 0x20
+#define AKM1_AUTH1B 0x21
+#define AKM2_AUTH1A 0x40
+#define AKM2_AUTH1B 0x41
+#define PK_AUTH1A   0x60
+#define PK_AUTH1B   0x61
+
 // Function return sizes in bytes
+#define MIN_CMD_EXT_SIZE   4
 #define READER_TYPE_SIZE   4
 #define READER_SERIAL_SIZE 4
 #define READER_KEY_SIZE    6
 #define USER_DATA_SIZE     16
 #define CARD_ID_SIZE       4
 #define CARD_ID_EX_SIZE    10
+#define BLOCK_SIZE         16
 
 enum PacketType {
 	PACKET_ACK = ACK_HEADER,
@@ -185,6 +197,24 @@ class uFR {
 		// Card type per DLogic enumeration
 		uint8_t getCardTypeDLogic(uint8_t *cardType);
 
+		// Reads block value using direct block adressing (0-63 for Mifare 1K)
+		uint8_t readBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex = 0, bool authModeB = false);
+
+		// Automatic key mode
+		uint8_t readBlockAKM1(uint8_t data[BLOCK_SIZE], uint8_t address, bool authModeB = false);
+
+		// Provided key mode
+		uint8_t readBlockPK(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t key[READER_KEY_SIZE], bool authModeB = false);
+
+		// Writes whole block of data using direct block adressing (0-63 for Mifare 1K), reader key mode
+		uint8_t writeBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex = 0, bool authModeB = false);
+
+		// Linear data read (address to address + length); possibly doesn't work with length > 64
+		uint8_t readLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex = 0, bool authModeB = false);
+
+		// Reader key mode
+		uint8_t writeLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex = 0, bool authModeB = false);
+
 		// -------------------------------------------------------------
 
 		static const char * TypeDLogicToString(uint8_t type);
@@ -202,6 +232,7 @@ class uFR {
 		class Packet {
 			public:
 				static uint8_t checksum(uint8_t *packet, uint8_t size = PACKET_LENGTH - 1);
+				static void append(uint8_t *array, uint8_t *data, uint16_t length, uint16_t start = 0);
 				inline uint8_t getErrorCode() { return errorCode; }
 				inline uint8_t getLength() { return length; }
 				void copyData(uint8_t *array, uint16_t start, uint16_t length);

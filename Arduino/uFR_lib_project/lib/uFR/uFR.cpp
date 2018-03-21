@@ -143,7 +143,8 @@ uint8_t uFR::getCardID(uint8_t cardID[CARD_ID_EX_SIZE], uint8_t *length, uint8_t
 	sendPacketCMD(GET_CARD_ID_EX);
 	PROCESS_RSP(GET_CARD_ID_EX);
 	PROCESS_EXT(CARD_ID_EX_SIZE);
-	extPacket.copyDataReverse(cardID, 0, rspPacket[PAR1_BYTE]);
+	//extPacket.copyDataReverse(cardID, 0, rspPacket[PAR1_BYTE]);
+	extPacket.copyData(cardID, 0, rspPacket[PAR1_BYTE]);
 	if (cardType) *cardType = rspPacket[PAR0_BYTE];
 	if (length) *length = rspPacket[PAR1_BYTE];
 	return 0;
@@ -154,6 +155,89 @@ uint8_t uFR::getCardTypeDLogic(uint8_t *cardType) {
 	sendPacketCMD(GET_DLOGIC_CARD_TYPE);
 	PROCESS_RSP(GET_DLOGIC_CARD_TYPE);
 	*cardType = rspPacket[PAR0_BYTE];
+	return 0;
+}
+
+// Needs testing -----------------------------------------------------------------------
+
+uint8_t uFR::readBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_READ, MIN_CMD_EXT_SIZE + 1, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(BLOCK_READ);
+	uint8_t packet[MIN_CMD_EXT_SIZE] = {address, 0, 0, 0};
+	sendPacketEXT(packet, MIN_CMD_EXT_SIZE);
+	PROCESS_RSP(BLOCK_READ);
+	PROCESS_EXT(BLOCK_SIZE);
+	extPacket.copyData(data, 0, BLOCK_SIZE);
+	return 0;
+}
+
+uint8_t uFR::readBlockAKM1(uint8_t data[BLOCK_SIZE], uint8_t address, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_READ, MIN_CMD_EXT_SIZE + 1, authModeB ? AKM1_AUTH1B : AKM1_AUTH1A);
+	PROCESS_ACK(BLOCK_READ);
+	uint8_t packet[MIN_CMD_EXT_SIZE] = {address, 0, 0, 0};
+	sendPacketEXT(packet, MIN_CMD_EXT_SIZE);
+	PROCESS_RSP(BLOCK_READ);
+	PROCESS_EXT(BLOCK_SIZE);
+	extPacket.copyData(data, 0, BLOCK_SIZE);
+	return 0;
+}
+
+uint8_t uFR::readBlockPK(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t key[READER_KEY_SIZE], bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_READ, 11, authModeB ? PK_AUTH1B : PK_AUTH1A);
+	PROCESS_ACK(BLOCK_READ);
+	uint8_t packet[10] = {address, 0, 0, 0, key[0], key[1], key[2], key[3], key[4], key[5]};
+	sendPacketEXT(packet, 10);
+	PROCESS_RSP(BLOCK_READ);
+	PROCESS_EXT(BLOCK_SIZE);
+	extPacket.copyData(data, 0, BLOCK_SIZE);
+	return 0;
+}
+
+uint8_t uFR::writeBlock(uint8_t data[BLOCK_SIZE], uint8_t address, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(BLOCK_WRITE, 21, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(BLOCK_WRITE);
+	uint8_t packet[20] = {address, 0, 0, 0};
+	Packet::append(packet, data, BLOCK_SIZE, 4);
+	sendPacketEXT(packet, 20);
+	PROCESS_RSP(BLOCK_WRITE);
+	return 0;
+}
+
+uint8_t uFR::readLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(LINEAR_READ, 5, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(LINEAR_READ);
+	// low byte, high byte (little-endian)
+	uint8_t packet[4] = {
+		static_cast<uint8_t>(address & 0xFF),
+		static_cast<uint8_t>(address >> 8),
+		static_cast<uint8_t>(length & 0xFF),
+		static_cast<uint8_t>(length >> 8)
+	};
+	sendPacketEXT(packet, 4);
+	PROCESS_RSP(LINEAR_READ);
+	PROCESS_EXT(length);
+	extPacket.copyData(data, 0, length);
+	return 0;
+}
+
+uint8_t uFR::writeLinear(uint8_t data[], uint16_t address, uint16_t length, uint8_t keyIndex, bool authModeB) {
+	flushSerial();
+	sendPacketCMD(LINEAR_WRITE, length + 5, authModeB ? RKA_AUTH1B : RKA_AUTH1A, keyIndex);
+	PROCESS_ACK(LINEAR_WRITE);
+	uint8_t packet[length + 4] = {
+		static_cast<uint8_t>(address & 0xFF),
+		static_cast<uint8_t>(address >> 8),
+		static_cast<uint8_t>(length & 0xFF),
+		static_cast<uint8_t>(length >> 8)
+	};
+	Packet::append(packet, data, length, 4);
+	sendPacketEXT(packet, length + 4);
+	PROCESS_RSP(LINEAR_WRITE);
 	return 0;
 }
 

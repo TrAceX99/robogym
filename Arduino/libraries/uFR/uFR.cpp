@@ -143,7 +143,9 @@ uint8_t uFR::getCardID(uint8_t cardID[CARD_ID_EX_SIZE], uint8_t *length, uint8_t
 	sendPacketCMD(GET_CARD_ID_EX);
 	PROCESS_RSP(GET_CARD_ID_EX);
 	PROCESS_EXT(CARD_ID_EX_SIZE);
-	extPacket.copyDataReverse(cardID, 0, rspPacket[PAR1_BYTE]);
+	//extPacket.copyDataReverse(cardID, 0, rspPacket[PAR1_BYTE]);
+	//extPacket.copyData is used to make the order of bytes of cardID as on the card
+	extPacket.copyData(cardID, 0, rspPacket[PAR1_BYTE]);
 	if (cardType) *cardType = rspPacket[PAR0_BYTE];
 	if (length) *length = rspPacket[PAR1_BYTE];
 	return 0;
